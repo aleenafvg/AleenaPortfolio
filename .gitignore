@@ -1,0 +1,14 @@
+# Scratch & temporary scripts
+scratch/
+scratch_*
+extract_*.js
+find_*.js
+clean_modal.js
+*.bak
+*.log
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
