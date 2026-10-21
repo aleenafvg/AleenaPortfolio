@@ -93,8 +93,8 @@ img { max-width: 100%; display: block; user-select: none; }
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   display: grid; grid-template-columns: auto 1fr auto;
   align-items: center; padding: 14px 5%; min-height: 60px;
-  background: rgba(227,23,10,0.95); backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  background: rgba(227, 23, 10, 0.96); backdrop-filter: blur(10px);
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.85); /* Thin crisp white line below navbar */
 }
 
 .nav-logo {
@@ -196,22 +196,73 @@ img { max-width: 100%; display: block; user-select: none; }
     align-items: center;
     padding: 10px 4%;
     gap: 8px;
+    min-height: 50px;
   }
   .nav-links {
     display: flex;
-    gap: 12px;
-    padding-left: 10px;
-    overflow-x: auto;
-    scrollbar-width: none;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 14px;
+    padding-left: 0;
+    overflow: visible;
   }
-  .nav-links::-webkit-scrollbar { display: none; }
+  /* Remove 2-span rolling vertical hover effect on touch mobile - make navbar clean and normal */
   .nav-link {
-    font-size: 11px;
-    white-space: nowrap;
+    height: auto !important;
+    overflow: visible !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    font-size: 11px !important;
+    letter-spacing: 1px !important;
+    white-space: nowrap !important;
+    padding: 4px 2px !important;
   }
-  .nav-cta {
-    padding: 6px 12px;
-    font-size: 10px;
+  .nav-link span:last-child {
+    display: none !important;
+  }
+  .nav-link span:first-child {
+    transform: none !important;
+    color: var(--cream) !important;
+    opacity: 0.82;
+    transition: color 0.2s ease, opacity 0.2s ease;
+  }
+  .nav-link:hover span:first-child,
+  .nav-link:focus-visible span:first-child {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  .nav-link.active span:first-child {
+    transform: none !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    opacity: 1 !important;
+  }
+  .nav-link.active::after {
+    bottom: -2px !important;
+    height: 2px !important;
+    background: #ffffff !important;
+  }
+  body.intro-blackout .nav-link.active span:first-child {
+    color: #38bdf8 !important;
+    text-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+  }
+  body.intro-blackout .nav-link.active::after {
+    background: #38bdf8 !important;
+  }
+}
+@media (max-width: 480px) {
+  .hero-nav {
+    padding: 8px 3% !important;
+  }
+  .nav-logo {
+    font-size: 18px !important;
+  }
+  .nav-links {
+    gap: 9px !important;
+  }
+  .nav-link {
+    font-size: 10px !important;
+    letter-spacing: 0.6px !important;
   }
 }
 
@@ -234,7 +285,7 @@ img { max-width: 100%; display: block; user-select: none; }
   box-shadow: 0 4px 12px rgba(0,0,0,0.4);
   font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
   text-transform: uppercase; letter-spacing: 3px;
-  color: var(--red); text-shadow: 0 0 8px rgba(227,23,10,0.6);
+  color: var(--red); text-shadow: 0 0 8px rgba(128,0,0,0.6);
   user-select: none;
 }
 
@@ -537,6 +588,18 @@ img { max-width: 100%; display: block; user-select: none; }
   border: 1px solid rgba(255, 255, 255, 0.22);
   padding: 3px 8px;
   border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--cream);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  padding: 3px 8px;
+  border-radius: 20px;
   text-transform: uppercase;
   display: inline-flex;
   align-items: center;
@@ -577,18 +640,102 @@ img { max-width: 100%; display: block; user-select: none; }
 @media (max-width: 900px) {
   .hero-menu-options,
   .section-menu-options {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+    max-width: 500px !important;
+    margin: 20px auto 12px !important;
   }
 }
 
-@media (max-width: 540px) {
+@media (max-width: 640px) {
+  /* Selected menu completely replaces the hero at the top, NEVER below it */
+  .portfolio-views-stage {
+    min-height: auto !important;
+  }
+  .portfolio-view:not(.active),
+  .hero:not(.active),
+  #viewHome:not(.active) {
+    display: none !important;
+  }
+  .portfolio-view.active,
+  .hero.active,
+  #viewHome.active {
+    min-height: auto !important;
+    padding-bottom: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+  }
+  .machine-wrap {
+    flex: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    padding: 68px 12px 2px !important;
+  }
+  .machine {
+    gap: 8px !important;
+    width: 100% !important;
+  }
+  .hero-caption {
+    min-height: auto !important;
+    margin-top: 4px !important;
+    margin-bottom: 0 !important;
+    padding: 0 8px !important;
+    line-height: 1.2 !important;
+  }
+  /* On mobile: Thinner, smaller singular row of 4 buttons with zero extra space */
   .hero-menu-options,
   .section-menu-options {
-    grid-template-columns: 1fr;
-    margin: 16px auto;
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 6px !important;
+    width: min(96%, 400px) !important;
+    margin: 6px auto 2px !important;
+    padding: 0 2px !important;
   }
   .hero-menu-card {
-    padding: 12px 14px;
+    min-height: 42px !important;
+    padding: 8px 2px !important;
+    border-radius: 9px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(13, 13, 13, 0.65) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.35) !important;
+    text-align: center !important;
+  }
+  /* On mobile: Hide numbers and pills and sublabels! Just clean name in singular row */
+  .hm-card-top,
+  .hm-pill,
+  .hm-sub {
+    display: none !important;
+  }
+  .hm-title {
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.3px !important;
+    text-align: center !important;
+    color: var(--cream) !important;
+    white-space: nowrap !important;
+    margin: 0 !important;
+  }
+  .hero-rail {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin-top: 2px !important;
+    padding: 2px 5% 10px !important;
+  }
+  .rail-left,
+  .rail-center {
+    display: none !important;
+  }
+  .rail-right {
+    justify-content: center !important;
   }
 }
 
@@ -833,17 +980,23 @@ body.intro-blackout .intro-section .section-header {
   background-color: #08080a;
   z-index: 80;
   pointer-events: none;
-  /* Closed: flat rectangle in the exact center of the screen */
-  clip-path: inset(50% 50% 50% 50% round 12px);
-  transition: clip-path 0.75s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
   opacity: 0;
+  will-change: opacity;
+  transition: opacity 0.38s ease-out;
 }
 
 body.intro-blackout .blackout-center-rect {
   opacity: 1;
   pointer-events: auto;
-  /* Open: expands outward from center until it fills the whole screen */
-  clip-path: inset(0% 0% 0% 0% round 0px);
+}
+
+/* During blackout: hide footer and menus completely so nothing can flicker for a split second */
+body.intro-blackout .gravity-footer,
+body.intro-blackout .section-menu-options,
+body.intro-blackout .view-back-bar {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
 }
 
 body.intro-blackout {
@@ -890,6 +1043,8 @@ body.intro-blackout .nav-clock {
 }
 body.intro-blackout #viewAbout {
   position: fixed !important;
+  background: #08080a !important;
+  transition: background 0.35s ease-out !important;
   inset: 0 !important;
   top: 60px !important;
   left: 0 !important;
@@ -1125,6 +1280,20 @@ body.intro-blackout .tech-marquee-bar {
   z-index: 3;
 }
 
+/* Folder Opening: Peek cards fan out smoothly and physically when open */
+.dossier-stage.is-open .peek-card-1 {
+  transform: rotate(-7deg) translateY(-26px) !important;
+  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.dossier-stage.is-open .peek-card-2 {
+  transform: rotate(7deg) translateY(-34px) !important;
+  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.04s !important;
+}
+.dossier-stage.is-open .peek-card-3 {
+  transform: rotate(-4deg) translateY(-18px) !important;
+  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.08s !important;
+}
+
 .peek-tab-tag {
   position: absolute;
   top: 10px; left: 16px;
@@ -1261,14 +1430,14 @@ body.intro-blackout .tech-marquee-bar {
 
 /* Previous text (1 scroll ago): blurred and dimmed above current text */
 .intro-step.is-prev {
-  opacity: 0.22 !important;
+  opacity: 0.20 !important;
   visibility: visible !important;
-  max-height: 140px !important;
+  max-height: 52px !important; /* Halved to prevent cutting current text */
   overflow: hidden !important;
-  margin-bottom: 18px !important;
+  margin-bottom: 8px !important;
   transform: translateY(0) scale(0.96) !important;
   transform-origin: left bottom !important;
-  filter: blur(5px) !important;
+  filter: blur(4px) !important;
   pointer-events: none !important;
 }
 
@@ -1287,15 +1456,15 @@ body.intro-blackout .tech-marquee-bar {
 /* NORMAL WHITE TEXT (NO BACKGROUND, NO GLOW) */
 .step-text {
   font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: clamp(2.65rem, 4.4vw, 3.9rem) !important;
+  font-size: clamp(3.2rem, 5.2vw, 4.6rem) !important; /* Bigger, bolder statement font */
   font-weight: 800;
-  line-height: 1.26;
+  line-height: 1.14;
   color: #ffffff !important;
   letter-spacing: -1px;
   background: transparent !important;
   text-shadow: none !important;
   margin: 0;
-  padding-bottom: 8px;
+  padding-bottom: 6px;
   text-align: left !important;
 }
 
@@ -1398,11 +1567,15 @@ body.intro-blackout .tech-marquee-bar {
 
 @media (max-width: 900px) {
   .static-prefix {
-    font-size: clamp(1.8rem, 6vw, 2.5rem) !important;
+    font-size: clamp(2.2rem, 6.8vw, 3.2rem) !important;
   }
   .skill-word {
-    font-size: clamp(1.8rem, 6vw, 2.5rem) !important;
+    font-size: clamp(2.2rem, 6.8vw, 3.2rem) !important;
     white-space: normal;
+  }
+  .step-text {
+    font-size: clamp(2.4rem, 6.8vw, 3.4rem) !important;
+    line-height: 1.14 !important;
   }
 }
 
@@ -1416,11 +1589,37 @@ body.intro-blackout .tech-marquee-bar {
   padding-bottom: 6px;
 }
 
+@media (max-width: 640px) {
+  .intro-menu-options {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px 10px !important;
+    width: min(100%, 300px) !important;
+    margin-top: 14px !important;
+  }
+  .intro-menu-btn {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 7px 10px !important;
+    font-size: 10px !important;
+    white-space: nowrap !important;
+  }
+}
+
 .intro-menu-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 8px 18px;
+}
+.intro-menu-btn svg {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.intro-menu-btn-orig {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 999px;
@@ -1448,16 +1647,16 @@ body.intro-blackout .tech-marquee-bar {
 }
 
 .intro-menu-btn.btn-contact {
-  background: rgba(255, 59, 48, 0.15);
-  border-color: rgba(255, 59, 48, 0.45);
-  color: #ff6961;
+  background: rgba(160, 20, 20, 0.25);
+  border-color: rgba(220, 40, 40, 0.55);
+  color: #ffb3b3;
 }
 
 .intro-menu-btn.btn-contact:hover {
-  background: #ff3b30;
-  border-color: #ff3b30;
+  background: var(--red);
+  border-color: var(--highlight);
   color: #ffffff;
-  box-shadow: 0 4px 16px rgba(255, 59, 48, 0.4);
+  box-shadow: 0 4px 16px rgba(128, 0, 0, 0.5);
 }
 
 /* Minimalist bottom guide: Lowered down further to provide ample breathing room */
@@ -1485,11 +1684,11 @@ body.intro-blackout .tech-marquee-bar {
   .dossier-stage.is-open {
     flex-direction: column;
     align-items: center;
-    gap: 24px;
+    gap: 20px;
   }
   .dossier-stage.is-open .dossier-folder-dock {
     width: 100%;
-    max-width: 380px;
+    max-width: 340px;
   }
   .intro-text-theater {
     width: 100%;
@@ -1501,6 +1700,234 @@ body.intro-blackout .tech-marquee-bar {
   }
   .step-text {
     font-size: clamp(1.8rem, 6vw, 2.5rem) !important;
+  }
+}
+
+/* Specific Mobile Responsive Optimizations for About Me & Blue Folder */
+@media (max-width: 640px) {
+  /* Closed State of About Me */
+  .intro-section,
+  #viewAbout {
+    background: #08080a !important;
+    background-color: #08080a !important;
+    padding: 68px 4% 28px !important;
+    min-height: calc(100vh - 50px) !important;
+    justify-content: flex-start !important;
+  }
+  .intro-section .section-header {
+    margin-top: 6px !important;
+    margin-bottom: 20px !important;
+  }
+  .intro-section .section-header h2 {
+    font-size: clamp(2.1rem, 7vw, 3rem) !important;
+  }
+  /* In closed state: folder is EXACTLY the same component, not flattened */
+  .dossier-folder-dock {
+    will-change: transform;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), height 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+  .dossier-stage:not(.is-open) .dossier-folder-dock {
+    width: 360px !important;
+    margin: 0 auto !important;
+    transform: scale(0.84) !important;
+    transform-origin: top center !important;
+    height: 330px !important;
+  }
+
+  /* Blackout Active State of About Me: 100% pitch black across the entire screen — NO red bar at the bottom! */
+  html.intro-blackout,
+  body.intro-blackout {
+    background: #08080a !important;
+    background-color: #08080a !important;
+    overflow: hidden !important;
+  }
+  body.intro-blackout #viewAbout {
+    position: fixed !important;
+    background: #08080a !important;
+    background-color: #08080a !important;
+    transition: background 0.35s ease-out !important;
+    inset: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    padding: 0 4% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    overflow: hidden !important;
+    z-index: 90 !important;
+  }
+  body.intro-blackout .tech-marquee-bar {
+    background: #08080a !important;
+    background-color: #08080a !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  .tech-marquee-bar.marquee-top {
+    top: 50px !important;
+    height: 40px !important;
+  }
+  .tech-marquee-bar.marquee-bottom {
+    bottom: 0 !important;
+    height: 40px !important;
+  }
+  .tech-marquee-bar img {
+    height: 22px !important;
+  }
+
+  /* Stage Container: sits strictly between top and bottom marquees */
+  body.intro-blackout .dossier-stage-wrap {
+    height: 100% !important;
+    width: 100% !important;
+    max-width: 420px !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+  }
+  /* Mobile blackout stage: Centered folder, NO empty gap, text directly below folder with bigger font filling the space */
+  .dossier-stage.is-open {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important; /* Centered in viewport, NO empty dead space! */
+    align-items: center !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    padding-top: 50px !important; /* Sits comfortably below top bar */
+    padding-bottom: 44px !important;
+    gap: 12px !important; /* Tight, cohesive spacing between folder and text */
+  }
+
+  /* Folder proudly centered in the view */
+  .dossier-stage.is-open .dossier-folder-dock {
+    width: 360px !important;
+    margin: 0 auto !important;
+    transform: scale(0.58) !important; /* Substantial, perfectly centered folder */
+    transform-origin: center center !important;
+    height: 224px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Text Theater: Directly below folder, filling the space with bigger fonts */
+  .intro-text-theater {
+    width: 100% !important;
+    max-width: 420px !important;
+    margin-top: 0 !important; /* No giant gap */
+    margin-bottom: 0 !important;
+    padding-bottom: 2px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    min-height: 190px !important;
+    overflow: visible !important;
+  }
+  .intro-lines-deck {
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    width: 100% !important;
+    overflow: visible !important;
+  }
+  /* Bigger, bolder fonts that fill the space with words without dead space */
+  .intro-step.is-prev {
+    max-height: 42px !important;
+    margin-bottom: 6px !important;
+    opacity: 0.24 !important;
+    overflow: hidden !important;
+  }
+  .intro-step.is-current {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  .step-text,
+  .static-prefix,
+  .skill-word {
+    font-size: clamp(2.15rem, 7.6vw, 3.2rem) !important; /* Bigger impactful font filling the space */
+    line-height: 1.14 !important;
+    font-weight: 800 !important;
+    padding-bottom: 3px !important;
+    letter-spacing: -0.6px !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    word-spacing: 0.12em !important;
+  }
+  .apple-emoji {
+    width: 1.12em !important;
+    height: 1.12em !important;
+    margin: 0 4px !important;
+  }
+  .intro-scroll-guide {
+    margin-top: 8px !important;
+    padding-top: 4px !important;
+  }
+  .guide-label {
+    font-size: 8.5px !important;
+  }
+
+  /* When Step 10 is active: hide the previous step 9 on mobile so step 10 has full vertical clearance */
+  .dossier-stage.step-10-active .intro-step[data-step="9"].is-prev,
+  .dossier-stage.step-10-active .intro-scroll-guide {
+    display: none !important;
+  }
+
+  .intro-step[data-step="10"].is-current {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-end !important;
+    align-items: flex-start !important;
+    overflow: visible !important;
+    max-height: 280px !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 4px !important;
+  }
+
+  .intro-step[data-step="10"] .step-text {
+    font-size: clamp(1.4rem, 5.2vw, 1.85rem) !important;
+    line-height: 1.2 !important;
+    margin-bottom: 6px !important;
+    padding-bottom: 2px !important;
+  }
+
+  .intro-menu-options {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px 10px !important;
+    width: 100% !important;
+    max-width: 320px !important;
+    margin-top: 8px !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  .intro-menu-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    padding: 8px 10px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    background: rgba(255, 255, 255, 0.14) !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+    border-radius: 999px !important;
+    color: #ffffff !important;
+    white-space: nowrap !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.35) !important;
+  }
+
+  .intro-menu-btn svg {
+    width: 12px !important;
+    height: 12px !important;
+    display: inline-block !important;
+  }
+
+  .intro-menu-btn .btn-num {
+    font-size: 9px !important;
+    opacity: 0.8 !important;
   }
 }
 
@@ -1533,6 +1960,88 @@ body.intro-blackout .tech-marquee-bar {
   width: 100%;
   max-width: 580px;
   margin: 55px auto 40px;
+}
+
+@media (max-width: 768px) {
+  .projects-section {
+    padding: 70px 4% 40px !important;
+  }
+  .projects-section .section-header {
+    margin-bottom: 16px !important;
+  }
+  .projects-section .section-header h2 {
+    font-size: clamp(2rem, 6.5vw, 2.8rem) !important;
+  }
+  .crate-hero-wrap {
+    width: 100% !important;
+    max-width: min(92vw, 360px) !important;
+    margin: 14px auto 20px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+  .archive {
+    width: 100% !important;
+    max-width: min(92vw, 360px) !important;
+    margin: 0 auto !important;
+  }
+  /* Fit all 6 projects in a clean 2-column (2 X 3) grid on mobile */
+  .projects-horizontal-deck {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px 10px !important;
+    width: 100% !important;
+    max-width: 440px !important;
+    margin: 0 auto !important;
+    padding: 0 2px !important;
+  }
+  .project-card-h {
+    padding: 10px 11px !important;
+    border-radius: 12px !important;
+    min-height: 125px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+  }
+  .project-card-h .card-h-top {
+    margin-bottom: 3px !important;
+  }
+  .project-card-h .card-h-num {
+    font-size: 0.95rem !important;
+    font-weight: 900 !important;
+  }
+  .project-card-h .card-h-year {
+    font-size: 0.6rem !important;
+    padding: 1px 4px !important;
+  }
+  .project-card-h .card-h-title {
+    font-size: 1.05rem !important;
+    line-height: 1.15 !important;
+    margin-bottom: 4px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  .project-card-h .card-h-desc {
+    font-size: 0.7rem !important;
+    line-height: 1.35 !important;
+    margin-bottom: 6px !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+  }
+  .project-card-h .card-h-footer {
+    padding-top: 5px !important;
+  }
+  .project-card-h .card-h-photos {
+    font-size: 7.5px !important;
+    gap: 3px !important;
+  }
+  .project-card-h .card-h-cta { display: none !important; 
+    font-size: 8px !important;
+    letter-spacing: 0 !important;
+  }
 }
 
 /* Horizontal Projects Deck */
@@ -1617,7 +2126,7 @@ body.intro-blackout .tech-marquee-bar {
   align-items: center;
   gap: 5px;
 }
-.project-card-h .card-h-cta {
+.project-card-h .card-h-cta { display: none !important; 
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   font-weight: 700;
@@ -1899,8 +2408,8 @@ dialog.case-overlay::backdrop {
 }
 .dialog-tech span {
   padding: 6px 14px;
-  background: rgba(227,23,10,0.18);
-  border: 1px solid rgba(227,23,10,0.45);
+  background: rgba(128,0,0,0.18);
+  border: 1px solid rgba(128,0,0,0.45);
   border-radius: 20px;
   font-size: 0.82rem;
   font-family: 'JetBrains Mono', monospace;
@@ -1936,7 +2445,7 @@ dialog.case-overlay::backdrop {
   background: var(--red);
   color: #fff;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(227,23,10,0.45);
+  box-shadow: 0 6px 20px rgba(128,0,0,0.45);
 }
 
 /* ======================== 3D CERTIFICATES WHEEL ======================== */
@@ -1977,17 +2486,100 @@ dialog.case-overlay::backdrop {
   z-index: 2;
 }
 
-.wheel-container {
+/* ======================== CURVE FLOW CAROUSEL (FRAMER) ======================== */
+.curve-flow-container {
   position: relative;
   width: 100%;
-  max-width: 1260px;
-  height: 520px;
-  perspective: 1150px;
+  max-width: 1400px;
+  margin: 18px auto 14px;
+  padding: 10px 0;
+  overflow: visible;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.curve-flow-viewport {
+  position: relative;
+  width: 100%;
+  height: 310px;
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 10px auto 14px;
+  cursor: grab;
+  touch-action: pan-y;
+  overflow: visible;
+}
+.curve-flow-viewport:active {
+  cursor: grabbing;
+}
+
+.curve-flow-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.curve-flow-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 320px;
+  height: 220px;
+  margin-left: -160px;
+  margin-top: -110px;
+  transform-style: preserve-3d;
+  will-change: transform, filter;
+  border-radius: 0 !important;
+  background: #0d0d0d;
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.14);
+  cursor: pointer;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+.curve-flow-card:hover {
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.85), 0 0 0 1.5px rgba(255, 255, 255, 0.45);
+}
+
+.curve-flow-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
   user-select: none;
+  -webkit-user-select: none;
+}
+
+@media (max-width: 768px) {
+  .curve-flow-viewport {
+    height: 230px;
+    perspective: 850px;
+  }
+  .curve-flow-card {
+    width: 220px;
+    height: 155px;
+    margin-left: -110px;
+    margin-top: -77.5px;
+  }
+}
+
+.wheel-controls {
+    margin-top: 10px !important;
+    gap: 12px !important;
+  }
+  .wheel-btn {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 14px !important;
+  }
+  .wheel-status {
+    font-size: 9.5px !important;
+  }
 }
 
 .wheel {
@@ -2104,34 +2696,71 @@ dialog.case-overlay::backdrop {
 }
 
 /* ======================== PERSISTENT GRAVITY FOOTER ======================== */
+.bottom-credits-bar {
+  background: #000000 !important;
+  width: 100%;
+  padding: 18px 5% 24px;
+  text-align: left !important; /* Shifted made by aleena to the left */
+  position: relative;
+  z-index: 30;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  user-select: none;
+  box-shadow: 0 1400px 0 1400px #000000; /* Guarantees pure black down to the very bottom, no red in sight */
+}
+.bottom-credits-bar span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  color: rgba(255, 255, 255, 0.75);
+  text-transform: lowercase;
+}
+
 .gravity-footer {
   position: relative;
   background: var(--red);
-  min-height: 520px;
+  min-height: 440px;
   overflow: hidden;
-  border-top: 1px solid rgba(255,255,255,0.12);
+  border-top: 1.5px solid rgba(255, 255, 255, 0.85);
+}
+
+@media (max-width: 768px) {
+  .gravity-footer {
+    border-top: 1.5px solid rgba(255, 255, 255, 0.95) !important; /* Prominent white line before footer starts on mobile */
+  }
 }
 .footer-inner {
   display: grid;
-  grid-template-columns: 1fr 1.35fr;
-  min-height: 520px;
+  grid-template-columns: 1.15fr 1fr;
+  min-height: 440px;
   position: relative;
 }
 .footer-left {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 60px 6%;
-  position: relative;
-  z-index: 5;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  padding: 24px 6% 22px !important;
+  position: relative !important;
+  z-index: 5 !important;
+  min-height: 440px !important;
+  text-align: left !important;
 }
 .footer-left h2 {
-  font-family: 'Instrument Serif', serif;
-  font-size: clamp(2.2rem, 4.2vw, 3.8rem);
-  color: var(--cream);
-  line-height: 1.15;
-  font-weight: 700;
-  margin-bottom: 12px;
+  font-family: 'Instrument Serif', serif !important;
+  font-size: clamp(4.6rem, 6.8vw, 7.2rem) !important;
+  color: var(--cream) !important;
+  line-height: 0.88 !important;
+  font-weight: 700 !important;
+  letter-spacing: -2.5px !important;
+  word-spacing: 0.12em !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  word-break: normal !important;
+  text-transform: none !important;
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
 }
 .footer-left h2 span {
   color: var(--muted);
@@ -2139,11 +2768,11 @@ dialog.case-overlay::backdrop {
 }
 .footer-channels {
   font-family: 'JetBrains Mono', monospace;
-  font-size: clamp(12px, 1.25vw, 15px);
+  font-size: 13px;
   color: rgba(255, 246, 238, 0.75);
   letter-spacing: 1.5px;
   font-weight: 500;
-  margin-bottom: 24px;
+  margin-bottom: 0;
 }
 .footer-copy {
   font-family: 'JetBrains Mono', monospace;
@@ -2157,25 +2786,53 @@ dialog.case-overlay::backdrop {
 
 .footer-right {
   position: relative;
-  min-height: 520px;
+  min-height: 440px;
   overflow: hidden;
   background: rgba(0,0,0,0.06);
   border-left: 1px solid rgba(255,255,255,0.12);
   user-select: none;
 }
+.talus-pulse-ring {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  box-sizing: border-box;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 99;
+}
+
 .falling-item {
   position: absolute;
   display: block;
   z-index: 4;
   touch-action: none;
   user-select: none;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 .falling-item img {
   width: 140px;
   height: auto;
-  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.5));
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.45));
   transition: transform 0.15s ease;
   pointer-events: none;
+  display: block;
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+}
+.talus-pulse-ring {
+  display: none !important;
 }
 .falling-item:active img {
   transform: scale(1.08);
@@ -2185,14 +2842,55 @@ dialog.case-overlay::backdrop {
 }
 
 @media (max-width: 840px) {
-  .footer-inner { grid-template-columns: 1fr; }
-  .footer-left { padding: 50px 5%; text-align: center; align-items: center; }
-  .footer-right { min-height: 420px; border-left: none; border-top: var(--thin-divide); }
+  /* Mobile: Single unified section without dividing borders */
+  .gravity-footer {
+    position: relative;
+    background: var(--red);
+    min-height: 560px;
+    overflow: hidden;
+    border-top: 1px solid rgba(255,255,255,0.12);
+  }
+  .footer-inner {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: auto !important;
+    position: relative !important;
+  }
+  .footer-left {
+    position: relative !important;
+    z-index: 10 !important;
+    width: 100% !important;
+    padding: 24px 5% 4px !important;
+    text-align: center !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    min-height: auto !important;
+  }
+  .footer-left h2 {
+    font-size: clamp(2.4rem, 7.8vw, 3.4rem) !important;
+    line-height: 1.05 !important;
+    letter-spacing: -1px !important;
+    margin-bottom: 6px !important;
+    word-spacing: 0.12em !important;
+  }
+  .footer-channels {
+    font-size: 11px !important;
+    margin-bottom: 4px !important;
+  }
+  .footer-right {
+    position: relative !important;
+    width: 100% !important;
+    min-height: 420px !important;
+    flex: 1 !important;
+    border: none !important;
+    background: transparent !important;
+    user-select: none !important;
+  }
   .certs-nav-btn.prev { left: 4px; }
   .certs-nav-btn.next { right: 4px; }
 }
 @media (max-width: 560px) {
-  .falling-item img { width: 105px; }
+  .falling-item img { width: 85px !important; }
 }
 </style>
 </head>
@@ -2288,7 +2986,7 @@ dialog.case-overlay::backdrop {
     <li><button type="button" class="nav-link" data-nav-target="about"><span>About</span><span>About</span></button></li>
     <li><button type="button" class="nav-link" data-nav-target="projects"><span>Work <sup>06</sup></span><span>Work <sup>06</sup></span></button></li>
     <li><button type="button" class="nav-link" data-nav-target="certs"><span>Certs <sup>16</sup></span><span>Certs <sup>16</sup></span></button></li>
-    <li><button type="button" class="nav-link" data-nav-target="contact"><span>Contact</span><span>Contact</span></button></li>
+    <li><button type="button" class="nav-link" data-nav-target="contact"><span>Contact &rarr;</span><span>Contact &rarr;</span></button></li>
   </ul>
   <div class="nav-right">
     <button class="sound-toggle" id="soundToggle" aria-label="Toggle sound">
@@ -2352,7 +3050,7 @@ dialog.case-overlay::backdrop {
               </span>
               <span class="hm-arrow">↗</span>
             </div>
-            <div class="hm-title">WORK // 06</div>
+            <div class="hm-title">WORK<span class="hm-sub"> // 06</span></div>
           </button>
 
           <button type="button" class="hero-menu-card" data-nav-target="certs" aria-label="Open Certificates">
@@ -2364,7 +3062,7 @@ dialog.case-overlay::backdrop {
               </span>
               <span class="hm-arrow">↗</span>
             </div>
-            <div class="hm-title">CERTS // 16</div>
+            <div class="hm-title">CERTS<span class="hm-sub"> // 16</span></div>
           </button>
 
           <button type="button" class="hero-menu-card" data-nav-target="contact" aria-label="Open Contact">
@@ -2387,7 +3085,6 @@ dialog.case-overlay::backdrop {
       <div class="rail-left">Tech · AI · Full-Stack · Cybersecurity</div>
       <div class="rail-center" id="railSegments"></div>
       <button type="button" class="rail-right" data-nav-target="contact" aria-label="Go to contact footer">
-        <span>Contact Footer</span>
         <div class="scroll-line"></div>
       </button>
     </div>
@@ -2466,18 +3163,22 @@ dialog.case-overlay::backdrop {
             <p class="step-text">wanna know more? <img class="apple-emoji" src="assets/apple-emojis/chat.png" alt="💬" title="Chat"></p>
             <div class="intro-menu-options" aria-label="Portfolio Menus">
               <button type="button" class="intro-menu-btn" data-nav-target="home">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                 <span class="btn-num">00</span>
                 <span>Home</span>
               </button>
               <button type="button" class="intro-menu-btn" data-nav-target="projects">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
                 <span class="btn-num">02</span>
                 <span>Work <sup>06</sup></span>
               </button>
               <button type="button" class="intro-menu-btn" data-nav-target="certs">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
                 <span class="btn-num">03</span>
                 <span>Certs <sup>16</sup></span>
               </button>
               <button type="button" class="intro-menu-btn btn-contact" data-nav-target="contact">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                 <span class="btn-num">04</span>
                 <span>Contact &rarr;</span>
               </button>
@@ -2517,7 +3218,7 @@ dialog.case-overlay::backdrop {
         </span>
         <span class="hm-arrow">↗</span>
       </div>
-      <div class="hm-title">WORK // 06</div>
+      <div class="hm-title">WORK<span class="hm-sub"> // 06</span></div>
     </button>
 
     <button type="button" class="hero-menu-card" data-nav-target="certs" aria-label="Open Certificates">
@@ -2529,7 +3230,7 @@ dialog.case-overlay::backdrop {
         </span>
         <span class="hm-arrow">↗</span>
       </div>
-      <div class="hm-title">CERTS // 16</div>
+      <div class="hm-title">CERTS<span class="hm-sub"> // 16</span></div>
     </button>
 
     <button type="button" class="hero-menu-card" data-nav-target="contact" aria-label="Open Contact">
@@ -2632,7 +3333,6 @@ dialog.case-overlay::backdrop {
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
           4 PHOTOS
         </span>
-        <span class="card-h-cta">OPEN FILE ↗</span>
       </div>
     </button>
 
@@ -2650,7 +3350,6 @@ dialog.case-overlay::backdrop {
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
           5 PHOTOS
         </span>
-        <span class="card-h-cta">OPEN FILE ↗</span>
       </div>
     </button>
 
@@ -2668,7 +3367,6 @@ dialog.case-overlay::backdrop {
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
           10 PHOTOS
         </span>
-        <span class="card-h-cta">OPEN FILE ↗</span>
       </div>
     </button>
 
@@ -2686,7 +3384,6 @@ dialog.case-overlay::backdrop {
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
           7 PHOTOS
         </span>
-        <span class="card-h-cta">OPEN FILE ↗</span>
       </div>
     </button>
 
@@ -2704,7 +3401,6 @@ dialog.case-overlay::backdrop {
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
           13 PHOTOS
         </span>
-        <span class="card-h-cta">OPEN FILE ↗</span>
       </div>
     </button>
 
@@ -2722,7 +3418,6 @@ dialog.case-overlay::backdrop {
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
           10 PHOTOS
         </span>
-        <span class="card-h-cta">OPEN FILE ↗</span>
       </div>
     </button>
   </div>
@@ -2762,7 +3457,7 @@ dialog.case-overlay::backdrop {
         </span>
         <span class="hm-arrow">↗</span>
       </div>
-      <div class="hm-title">CERTS // 16</div>
+      <div class="hm-title">CERTS<span class="hm-sub"> // 16</span></div>
     </button>
 
     <button type="button" class="hero-menu-card" data-nav-target="contact" aria-label="Open Contact">
@@ -2836,14 +3531,17 @@ dialog.case-overlay::backdrop {
     <h2>Certifications &amp; Achievements</h2>
   </div>
 
-  <div class="wheel-container" id="wheelContainer">
-    <div class="wheel" id="certWheel"></div>
+  <!-- CURVE FLOW CAROUSEL (FRAMER COMPONENT) -->
+  <div class="curve-flow-container" id="curveFlowContainer">
+    <div class="curve-flow-viewport" id="curveFlowViewport">
+      <div class="curve-flow-track" id="curveFlowTrack"></div>
+    </div>
   </div>
 
   <div class="wheel-controls">
-    <button type="button" class="wheel-btn" id="wheelLeft" aria-label="Rotate wheel left">←</button>
-    <span class="wheel-status">16 CERTIFICATES · HOVER OR CLICK ARROWS TO SPIN</span>
-    <button type="button" class="wheel-btn" id="wheelRight" aria-label="Rotate wheel right">→</button>
+    <button type="button" class="wheel-btn" id="curveFlowPrev" aria-label="Previous certificate">←</button>
+    <span class="wheel-status">16 CERTIFICATES · DRAG OR SWIPE · CLICK TO VIEW</span>
+    <button type="button" class="wheel-btn" id="curveFlowNext" aria-label="Next certificate">→</button>
   </div>
 
   <!-- SECTION MENU OPTIONS (MENU IN EVERY SECTION) -->
@@ -2881,7 +3579,7 @@ dialog.case-overlay::backdrop {
         </span>
         <span class="hm-arrow">↗</span>
       </div>
-      <div class="hm-title">WORK // 06</div>
+      <div class="hm-title">WORK<span class="hm-sub"> // 06</span></div>
     </button>
 
     <button type="button" class="hero-menu-card" data-nav-target="contact" aria-label="Open Contact">
@@ -2914,13 +3612,17 @@ dialog.case-overlay::backdrop {
     <div class="footer-left">
       <h2>Click on any of these <span>icons</span> to contact me</h2>
       <div class="footer-channels">(email, github, resume, linkedin)</div>
-      <div class="footer-copy">© 2026 ALEENA BURNEY. ALL RIGHTS RESERVED.</div>
     </div>
 
     <!-- Right side falling & draggable area -->
     <div class="footer-right" id="fallingArea"></div>
   </div>
 </footer>
+
+<!-- Bottom Credits Bar -->
+<div class="bottom-credits-bar" id="bottomCreditsBar">
+  <span>made by aleena</span>
+</div>
 
 <script>
 /* ====================================================================
@@ -3546,6 +4248,10 @@ function revealStep(step) {
     updateStepClasses(step10, 'is-current');
   }
 
+  if (dossierStage) {
+    dossierStage.classList.toggle('step-10-active', currentIntroStep === 10);
+  }
+
   if (guideLabel) {
     guideLabel.textContent = 'scroll to reveal';
   }
@@ -3630,8 +4336,12 @@ function openDossierStage() {
   window.scrollTo(0, 0);
   document.documentElement.scrollTop = 0;
   document.body.scrollTop = 0;
-  dossierStage.classList.add('is-open');
+
+  // Immediately trigger folder opening and swift smooth fade to black on both html and body
+  document.documentElement.classList.add('intro-blackout');
   document.body.classList.add('intro-blackout');
+  dossierStage.classList.add('is-open');
+
   document.querySelectorAll('.hero-nav .nav-link').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.navTarget === 'about');
   });
@@ -3646,11 +4356,10 @@ function openDossierStage() {
 
 function closeDossierStage() {
   if (!dossierStage) return;
-  dossierStage.classList.remove('is-open');
+  document.documentElement.classList.remove('intro-blackout');
   document.body.classList.remove('intro-blackout');
-  window.scrollTo(0, 0);
-  document.documentElement.scrollTop = 0;
-  document.body.scrollTop = 0;
+  dossierStage.classList.remove('is-open');
+  dossierStage.classList.remove('step-10-active');
 
   window.removeEventListener('wheel', handleBlackoutWheel);
   window.removeEventListener('touchstart', handleTouchStart);
@@ -3711,154 +4420,254 @@ if (urlParams.get('open') === 'true' || urlParams.get('open') === '1') {
   if (!isNaN(stepParam)) revealStep(stepParam);
 }
 
-// ---- 3D CERTIFICATES WHEEL WITH HOVER MOVEMENT ----
-const certFiles = [
-  'certificates/Screenshot 2026-03-08 210156.png',
-  'certificates/Screenshot 2026-03-08 210228.png',
-  'certificates/Screenshot 2026-03-08 210306.png',
-  'certificates/Screenshot 2026-03-08 210320.png',
-  'certificates/Screenshot 2026-03-09 234806.png',
-  'certificates/Screenshot 2026-03-11 223459.png',
-  'certificates/Screenshot 2026-03-14 110659.png',
-  'certificates/Screenshot 2026-04-19 220552.png',
-  'certificates/Screenshot 2026-04-19 220613.png',
-  'certificates/Screenshot 2026-04-19 220644.png',
-  'certificates/Screenshot 2026-09-11 232758.png',
-  'certificates/Screenshot 2026-09-11 234055.png',
-  'certificates/Screenshot 2026-10-08 151415.png',
-  'certificates/Screenshot 2026-10-08 151426.png',
-  'certificates/Screenshot 2026-10-08 151437.png',
-  'certificates/Screenshot 2026-10-08 152545.png',
+// ====================================================================
+// CURVE FLOW CAROUSEL ENGINE (FRAMER CURVE FLOW COMPONENT)
+// Infinite horizontal ribbon with 3D curvature, edge scaling & depth,
+// continuous flow drift, mouse drag & touch swipe with momentum, and lightbox view.
+// ====================================================================
+
+const certImages = [
+  "certificates/Screenshot 2026-03-08 210156.png",
+  "certificates/Screenshot 2026-03-08 210228.png",
+  "certificates/Screenshot 2026-03-08 210306.png",
+  "certificates/Screenshot 2026-03-08 210320.png",
+  "certificates/Screenshot 2026-03-09 234806.png",
+  "certificates/Screenshot 2026-03-11 223459.png",
+  "certificates/Screenshot 2026-03-14 110659.png",
+  "certificates/Screenshot 2026-04-19 220552.png",
+  "certificates/Screenshot 2026-04-19 220613.png",
+  "certificates/Screenshot 2026-04-19 220644.png",
+  "certificates/Screenshot 2026-09-11 232758.png",
+  "certificates/Screenshot 2026-09-11 234055.png",
+  "certificates/Screenshot 2026-10-08 151415.png",
+  "certificates/Screenshot 2026-10-08 151426.png",
+  "certificates/Screenshot 2026-10-08 151437.png",
+  "certificates/Screenshot 2026-10-08 152545.png"
 ];
 
-const certWheel = document.getElementById('certWheel');
-const wheelContainer = document.getElementById('wheelContainer');
-const certLightbox = document.getElementById('certLightbox');
-const certLightboxClose = document.getElementById('certLightboxClose');
-const certLightboxImg = document.getElementById('certLightboxImg');
-let wheelAngle = 0;
-let wheelHoverMove = 0;
-const anglePerCard = 360 / certFiles.length;
+let curveFlowTrackEl = null;
+let curveFlowViewportEl = null;
+let curveCards = [];
+let curveScrollOffset = 0;
+let curveVelocity = 0;
+let curveIsDragging = false;
+let curveDragStartX = 0;
+let curveDragLastX = 0;
+let curveDragDist = 0;
+let curveIsHovered = false;
+let curveRafId = 0;
+let curveInitialized = false;
 
-if (certWheel) {
-  certWheel.innerHTML = '';
-  certFiles.forEach((file, i) => {
+function getCurveSpacing() {
+  const w = window.innerWidth;
+  if (w <= 640) return 240;
+  if (w <= 900) return 280;
+  return 345;
+}
+
+function buildCurveFlowDOM() {
+  curveFlowTrackEl = document.getElementById('curveFlowTrack');
+  curveFlowViewportEl = document.getElementById('curveFlowViewport');
+  if (!curveFlowTrackEl || !curveFlowViewportEl) return;
+
+  curveFlowTrackEl.innerHTML = '';
+  curveCards = [];
+
+  certImages.forEach((imgSrc, i) => {
     const card = document.createElement('div');
-    card.className = 'wheel-card';
+    card.className = 'curve-flow-card';
     card.setAttribute('role', 'button');
     card.setAttribute('tabindex', '0');
     card.setAttribute('aria-label', `View Certificate ${i + 1}`);
 
     const img = document.createElement('img');
-    img.src = file;
+    img.src = imgSrc;
     img.alt = `Certificate ${i + 1}`;
-    img.loading = 'lazy';
+    img.draggable = false;
     card.appendChild(img);
-    const baseAngle = i * anglePerCard;
-    card.dataset.baseAngle = baseAngle;
-    card.style.width = '195px';
-    card.style.height = '135px';
-    // Exact inradius: adjacent card edges touch seamlessly with 0 gap and 0 overlap
-    card.style.transform = `rotateY(${baseAngle}deg) translateZ(490px)`;
 
     card.addEventListener('click', () => {
-      if (dragDist > 6) return;
-      if (certLightboxImg && certLightbox) {
-        certLightboxImg.src = file;
-        certLightbox.classList.add('open');
+      if (Math.abs(curveDragDist) < 8) {
+        openCertLightbox(imgSrc);
       }
     });
 
     card.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        card.click();
+        openCertLightbox(imgSrc);
       }
     });
 
-    certWheel.appendChild(card);
+    curveFlowTrackEl.appendChild(card);
+    curveCards.push({ el: card, src: imgSrc, index: i });
+  });
+
+  setupCurveFlowEvents();
+  if (!curveRafId) {
+    curveRafId = requestAnimationFrame(loopCurveFlow);
+  }
+}
+
+function updateCurveFlowPositions() {
+  if (!curveFlowViewportEl || !curveCards.length) return;
+  const viewportW = curveFlowViewportEl.offsetWidth || window.innerWidth;
+  const halfW = viewportW * 0.52;
+  const spacing = getCurveSpacing();
+  const trackLen = certImages.length * spacing;
+
+  curveCards.forEach((c) => {
+    let rawX = c.index * spacing - curveScrollOffset;
+    // Infinite modulo wrap around center [-trackLen/2, trackLen/2]
+    rawX = ((rawX % trackLen) + trackLen * 1.5) % trackLen - (trackLen * 0.5);
+
+    const u = rawX / halfW;
+    const absU = Math.abs(u);
+
+    if (absU > 1.65) {
+      c.el.style.visibility = 'hidden';
+      return;
+    }
+
+    c.el.style.visibility = 'visible';
+
+    // Curve Flow 3D Transform: concave curved panoramic sweep with edge scaling
+    const rotY = -Math.max(-1.5, Math.min(1.5, u)) * 28; // Cards turn toward center
+    const tz = -Math.min(1.5, u * u) * 160; // Cards curve back in depth
+    const scale = Math.max(0.72, 1 - 0.20 * Math.min(1, absU)); // Edge scaling
+    const brightness = Math.max(0.65, 1 - 0.30 * Math.min(1, absU)); // Vignette focus
+    const zIndex = Math.round((1 - Math.min(1, absU)) * 50);
+
+    c.el.style.transform = `translate3d(${rawX.toFixed(1)}px, 0, ${tz.toFixed(1)}px) rotateY(${rotY.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
+    c.el.style.filter = `brightness(${brightness.toFixed(3)})`;
+    c.el.style.zIndex = zIndex;
+  });
+}
+
+function loopCurveFlow() {
+  if (!curveIsDragging) {
+    // Gentle momentum release
+    curveScrollOffset += curveVelocity;
+    curveVelocity *= 0.93;
+
+    // Continuous flow drift when not hovered
+    if (!curveIsHovered && Math.abs(curveVelocity) < 0.2) {
+      curveScrollOffset += 0.42;
+    }
+  }
+
+  updateCurveFlowPositions();
+  curveRafId = requestAnimationFrame(loopCurveFlow);
+}
+
+function setupCurveFlowEvents() {
+  if (!curveFlowViewportEl || curveInitialized) return;
+  curveInitialized = true;
+
+  // Pointer drag support (both mouse and touch)
+  curveFlowViewportEl.addEventListener('pointerdown', (e) => {
+    curveIsDragging = true;
+    curveDragDist = 0;
+    curveDragStartX = e.clientX;
+    curveDragLastX = e.clientX;
+    curveVelocity = 0;
+    try { curveFlowViewportEl.setPointerCapture(e.pointerId); } catch (_) {}
+  });
+
+  window.addEventListener('pointermove', (e) => {
+    if (!curveIsDragging) return;
+    const dx = e.clientX - curveDragLastX;
+    curveDragDist += Math.abs(dx);
+    curveScrollOffset -= dx * 1.15;
+    curveVelocity = -dx * 0.85;
+    curveDragLastX = e.clientX;
+    updateCurveFlowPositions();
+  });
+
+  const onPointerUp = (e) => {
+    if (!curveIsDragging) return;
+    curveIsDragging = false;
+    try { curveFlowViewportEl.releasePointerCapture(e.pointerId); } catch (_) {}
+  };
+  window.addEventListener('pointerup', onPointerUp);
+  window.addEventListener('pointercancel', onPointerUp);
+
+  // Hover pause autoplay
+  curveFlowViewportEl.addEventListener('mouseenter', () => {
+    curveIsHovered = true;
+  });
+  curveFlowViewportEl.addEventListener('mouseleave', () => {
+    curveIsHovered = false;
+  });
+
+  // Trackpad / mouse wheel scroll
+  curveFlowViewportEl.addEventListener('wheel', (e) => {
+    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    if (Math.abs(delta) > 2) {
+      curveVelocity += delta * 0.12;
+      curveVelocity = Math.max(-28, Math.min(28, curveVelocity));
+    }
+  }, { passive: true });
+
+  // Arrow button navigation
+  const prevBtn = document.getElementById('curveFlowPrev') || document.getElementById('wheelLeft');
+  const nextBtn = document.getElementById('curveFlowNext') || document.getElementById('wheelRight');
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      const spacing = getCurveSpacing();
+      curveVelocity = -spacing * 0.14;
+    });
+  }
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      const spacing = getCurveSpacing();
+      curveVelocity = spacing * 0.14;
+    });
+  }
+
+  window.addEventListener('resize', () => {
+    updateCurveFlowPositions();
+  });
+}
+
+// Lightbox modal viewer for certificates
+const certLightbox = document.getElementById('certLightbox');
+const certLightboxImg = document.getElementById('certLightboxImg');
+const certLightboxClose = document.getElementById('certLightboxClose');
+
+function openCertLightbox(src) {
+  if (certLightbox && certLightboxImg) {
+    certLightboxImg.src = src;
+    certLightbox.classList.add('open');
+    certLightbox.classList.add('active');
+  }
+}
+
+if (certLightboxClose && certLightbox) {
+  certLightboxClose.addEventListener('click', () => {
+    certLightbox.classList.remove('open');
+    certLightbox.classList.remove('active');
+  });
+  certLightbox.addEventListener('click', (e) => {
+    if (e.target === certLightbox) {
+      certLightbox.classList.remove('open');
+      certLightbox.classList.remove('active');
+    }
   });
 }
 
 function renderWheel() {
-  if (!certWheel) return;
-  certWheel.style.transform = `rotateX(-10deg) rotateY(${wheelAngle}deg)`;
-}
-renderWheel();
-
-let dragDist = 0;
-
-if (wheelContainer) {
-  wheelContainer.addEventListener('mousemove', e => {
-    const rect = wheelContainer.getBoundingClientRect();
-    const ratioX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
-    wheelHoverMove = ratioX * 0.45;
-  });
-  wheelContainer.addEventListener('mouseleave', () => {
-    wheelHoverMove = 0;
-  });
-
-  // Drag to spin wheel
-  let isWheelDragging = false;
-  let wheelDragStartX = 0;
-  let wheelDragStartAngle = 0;
-
-  wheelContainer.addEventListener('mousedown', (e) => {
-    isWheelDragging = true;
-    dragDist = 0;
-    wheelDragStartX = e.clientX;
-    wheelDragStartAngle = wheelAngle;
-  });
-
-  window.addEventListener('mousemove', (e) => {
-    if (!isWheelDragging) return;
-    const dx = e.clientX - wheelDragStartX;
-    dragDist += Math.abs(dx);
-    wheelAngle = wheelDragStartAngle + dx * 0.35;
-    renderWheel();
-  });
-
-  window.addEventListener('mouseup', () => {
-    isWheelDragging = false;
-  });
+  buildCurveFlowDOM();
+  updateCurveFlowPositions();
 }
 
-function loopWheel() {
-  if (Math.abs(wheelHoverMove) > 0.01) {
-    wheelAngle += wheelHoverMove;
-    renderWheel();
-  }
-  requestAnimationFrame(loopWheel);
-}
-requestAnimationFrame(loopWheel);
-
-const wheelLeft = document.getElementById('wheelLeft');
-const wheelRight = document.getElementById('wheelRight');
-if (wheelLeft) {
-  wheelLeft.addEventListener('click', () => {
-    wheelAngle -= anglePerCard;
-    renderWheel();
-  });
-}
-if (wheelRight) {
-  wheelRight.addEventListener('click', () => {
-    wheelAngle += anglePerCard;
-    renderWheel();
-  });
-}
-
-if (certLightbox) {
-  certLightbox.addEventListener('click', (e) => {
-    if (e.target === certLightbox || e.target === certLightboxClose) {
-      certLightbox.classList.remove('open');
-    }
-  });
-}
-if (certLightboxClose) {
-  certLightboxClose.addEventListener('click', () => {
-    if (certLightbox) certLightbox.classList.remove('open');
-  });
-}
+document.addEventListener('DOMContentLoaded', () => {
+  buildCurveFlowDOM();
+});
+setTimeout(() => {
+  buildCurveFlowDOM();
+}, 200);
 
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
@@ -3875,8 +4684,13 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
-// ---- REQUIREMENTS 2, 3 & 4: 20 MIXED FALLING & RE-TRIGGERABLE DRAGGABLE FOOTER ICONS ----
-// 4 copies of each non-functioning PNG (Requirement: 4 x 3 = 12 items)
+// ====================================================================
+// PERSISTENT GRAVITY FOOTER WITH SMOOTH HOVER REPULSION & GUARANTEED PRIORITY FALLING
+// - Email, LinkedIn, GitHub, Resume ALWAYS fall first, land on the ground in front,
+//   and remain completely visible and easily clickable.
+// - Smooth hover repulsion & dynamic cursor physics (ported from Framer Talus).
+// ====================================================================
+
 const nonFunctioningItems = [
   { img: 'footer/download__14_-removebg-preview.png', clickable: false },
   { img: 'footer/download__14_-removebg-preview.png', clickable: false },
@@ -3892,7 +4706,6 @@ const nonFunctioningItems = [
   { img: 'footer/Round_Guy-removebg-preview.png', clickable: false },
 ];
 
-// Functioning items (2 copies each = 8 items)
 const functioningItems = [
   { img: 'footer/Screenshot_2026-10-08_192555-removebg-preview.png', action: 'email', clickable: true },
   { img: 'footer/Screenshot_2026-10-08_192555-removebg-preview.png', action: 'email', clickable: true },
@@ -3904,39 +4717,32 @@ const functioningItems = [
   { img: 'footer/Screenshot_2026-10-08_192605-removebg-preview.png', action: 'github', clickable: true },
 ];
 
-// Combine and thoroughly mix up / shuffle all 17 items (Requirement 4)
-function getShuffledItems() {
-  const all = [...nonFunctioningItems, ...functioningItems];
-  for (let i = all.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [all[i], all[j]] = [all[j], all[i]];
-  }
-  return all;
-}
-
-const footerItemsData = getShuffledItems();
-
 const fallingArea = document.getElementById('fallingArea');
 const gravityFooter = document.getElementById('contact');
 const fallingBodies = [];
 let footerDOMCreated = false;
-let footerInView = false;
-
-// Drag state
+let footerAnimRunning = false;
 let currentDragged = null;
-let dragStartX = 0;
-let dragStartY = 0;
-let dragInitialItemX = 0;
-let dragInitialItemY = 0;
+let dragStartX = 0, dragStartY = 0;
+let dragInitialItemX = 0, dragInitialItemY = 0;
 let hasMovedFar = false;
 
+// Hover repulsion removed per user request so icons rest stably and are 100% effortless to click!
 function buildFooterDOM() {
   if (footerDOMCreated) return;
   footerDOMCreated = true;
 
-  footerItemsData.forEach((item) => {
+  const allItems = [...functioningItems, ...nonFunctioningItems];
+
+  allItems.forEach((item) => {
     const el = document.createElement('div');
     el.className = 'falling-item';
+    if (item.clickable) {
+      el.style.cursor = 'pointer';
+      el.setAttribute('role', 'button');
+      el.setAttribute('tabindex', '0');
+      el.setAttribute('aria-label', `Contact via ${item.action}`);
+    }
 
     const img = document.createElement('img');
     img.src = item.img;
@@ -3949,7 +4755,7 @@ function buildFooterDOM() {
       el: el,
       data: item,
       x: 0,
-      y: -200,
+      y: -250,
       vx: 0,
       vy: 0,
       rotation: 0,
@@ -3957,24 +4763,41 @@ function buildFooterDOM() {
       grounded: false,
       groundTarget: 0,
       isDragged: false,
+      isFrontHero: false,
+      defaultZ: '10'
     };
     fallingBodies.push(body);
 
     el.addEventListener('mousedown', (e) => startDrag(e, body));
     el.addEventListener('touchstart', (e) => startDrag(e, body), { passive: false });
+
+    // Direct click handler for instant reliable contact opening
+    if (item.clickable) {
+      el.addEventListener('click', (e) => {
+        if (!hasMovedFar) {
+          executeAction(item.action);
+        }
+      });
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          executeAction(item.action);
+        }
+      });
+    }
   });
 }
 
-// Requirement 2: Function that drops/re-drops items whenever user scrolls down
-// Guarantees at least 1 LinkedIn, 1 Resume, and 1 GitHub fall in the FRONT row
+// User Request: Email, LinkedIn, GitHub, Resume ALWAYS fall first, land on the ground,
+// and sit in FRONT (zIndex 50) so they are immediately visible and clickable!
 function dropItems() {
   buildFooterDOM();
 
   const areaW = fallingArea.offsetWidth || 550;
   const areaH = fallingArea.offsetHeight || 520;
 
-  // Identify front priority items: 1 LinkedIn, 1 Resume, 1 GitHub
-  const frontActions = ['linkedin', 'resume', 'github'];
+  // Distinct functional icons: Email, LinkedIn, GitHub, Resume
+  const frontActions = ['email', 'linkedin', 'github', 'resume'];
   const frontHeroes = [];
   const otherBodies = [];
   const chosenActions = new Set();
@@ -3982,67 +4805,116 @@ function dropItems() {
   fallingBodies.forEach(b => {
     if (b.data && frontActions.includes(b.data.action) && !chosenActions.has(b.data.action)) {
       chosenActions.add(b.data.action);
-      b.isFront = true;
+      b.isFrontHero = true;
       frontHeroes.push(b);
     } else {
-      b.isFront = false;
+      b.isFrontHero = false;
       otherBodies.push(b);
     }
   });
 
-  // Assign 3 foreground positions across left, center, right
-  const frontXSlots = [
-    25 + (areaW - 160) * 0.18 + (Math.random() - 0.5) * 30,
-    25 + (areaW - 160) * 0.50 + (Math.random() - 0.5) * 30,
-    25 + (areaW - 160) * 0.82 + (Math.random() - 0.5) * 30,
+  // 4 well-spaced front ground positions: Email, LinkedIn, GitHub, Resume
+  const frontSlots = [
+    15 + (areaW - 150) * 0.10,
+    15 + (areaW - 150) * 0.36,
+    15 + (areaW - 150) * 0.62,
+    15 + (areaW - 150) * 0.88
   ];
-  for (let i = frontXSlots.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [frontXSlots[i], frontXSlots[j]] = [frontXSlots[j], frontXSlots[i]];
-  }
 
   frontHeroes.forEach((b, idx) => {
     b.grounded = false;
     b.isDragged = false;
-    b.defaultZ = '35';
-    b.el.style.zIndex = '35'; // Always in front of other icons
-    b.groundTarget = areaH - 120; // Front ground layer
-    b.x = Math.max(15, Math.min(areaW - 150, frontXSlots[idx]));
-    b.y = -100 - (idx * 35);
-    b.vx = (Math.random() - 0.5) * 1.5;
-    b.vy = Math.random() * 2.5 + 2.0;
-    b.rotation = (Math.random() - 0.5) * 20;
-    b.vr = (Math.random() - 0.5) * 2;
+    b.defaultZ = '50';
+    b.el.style.zIndex = '50'; // ALWAYS in front of all background stickers
+    b.groundTarget = areaH - 110; // Lands right on the ground in front
+    b.x = Math.max(12, Math.min(areaW - 145, frontSlots[idx] + (Math.random() - 0.5) * 16));
+    b.y = -50 - (idx * 25); // Drops FIRST
+    b.vx = (Math.random() - 0.5) * 1.2;
+    b.vy = 4.2 + Math.random() * 1.5; // Fast initial drop to hit ground first
+    b.rotation = (Math.random() - 0.5) * 14;
+    b.vr = (Math.random() - 0.5) * 1.5;
   });
 
-  // Distribute remaining 14 items across the background/midground
+  // Decorative stickers drop after and settle in the background/midground
   const otherCount = otherBodies.length;
-  const otherXSlots = [];
-  for (let i = 0; i < otherCount; i++) {
-    const ratio = i / (otherCount - 1);
-    otherXSlots.push(15 + ratio * (areaW - 160) + (Math.random() - 0.5) * 25);
-  }
-  for (let i = otherXSlots.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [otherXSlots[i], otherXSlots[j]] = [otherXSlots[j], otherXSlots[i]];
-  }
-
   otherBodies.forEach((b, i) => {
     b.grounded = false;
     b.isDragged = false;
     b.defaultZ = String(5 + (i % 8));
     b.el.style.zIndex = b.defaultZ;
-    // Sits in middle/back layers so front heroes stay completely unobstructed
-    b.groundTarget = areaH - 148 - ((i % 3) * 30) - (Math.random() * 15);
-    b.x = Math.max(10, Math.min(areaW - 150, otherXSlots[i]));
-    b.y = -120 - Math.random() * 260 - (i * 20);
-    b.vx = (Math.random() - 0.5) * 2.5;
-    b.vy = Math.random() * 2.5 + 1.5;
-    b.rotation = (Math.random() - 0.5) * 35;
-    b.vr = (Math.random() - 0.5) * 3;
+    b.groundTarget = areaH - 145 - ((i % 3) * 26) - (Math.random() * 14); // Sits behind
+    const ratio = i / Math.max(1, otherCount - 1);
+    b.x = Math.max(10, Math.min(areaW - 145, 12 + ratio * (areaW - 150) + (Math.random() - 0.5) * 24));
+    b.y = -130 - Math.random() * 220 - (i * 20); // Drops after heroes
+    b.vx = (Math.random() - 0.5) * 2.2;
+    b.vy = 2.2 + Math.random() * 2.0;
+    b.rotation = (Math.random() - 0.5) * 30;
+    b.vr = (Math.random() - 0.5) * 2.5;
   });
 
+  footerAnimRunning = true;
   requestAnimationFrame(animateFalling);
+}
+
+function animateFalling() {
+  const areaW = fallingArea.offsetWidth || 550;
+  let anyMoving = false;
+
+  fallingBodies.forEach((b) => {
+    if (b.isDragged) return;
+
+    if (!b.grounded) {
+      anyMoving = true;
+      b.vy += 0.38; // Gravity
+      b.y += b.vy;
+      b.x += b.vx;
+      b.rotation += b.vr;
+
+      // Wall bounce
+      if (b.x < 5) {
+        b.x = 5;
+        b.vx = Math.abs(b.vx) * 0.6;
+      } else if (b.x > areaW - 145) {
+        b.x = areaW - 145;
+        b.vx = -Math.abs(b.vx) * 0.6;
+      }
+
+      // Ground landing
+      if (b.y >= b.groundTarget) {
+        b.y = b.groundTarget;
+        b.vy = -b.vy * 0.28; // Bounce
+        b.vx *= 0.75;
+        b.vr *= 0.7;
+
+        if (Math.abs(b.vy) < 0.45 && Math.abs(b.vx) < 0.25) {
+          b.vy = 0;
+          b.vx = 0;
+          b.vr = 0;
+          b.grounded = true;
+        }
+      }
+    } else {
+      // Resting on ground but responds to hover impulses
+      if (Math.abs(b.vx) > 0.05 || Math.abs(b.vy) > 0.05) {
+        anyMoving = true;
+        b.x += b.vx;
+        b.y += b.vy;
+        b.vx *= 0.92;
+        b.vy *= 0.92;
+        b.rotation += b.vr;
+        b.vr *= 0.9;
+        if (b.y > b.groundTarget) b.y = b.groundTarget;
+      }
+    }
+
+    b.el.style.transform = `translate(${b.x.toFixed(1)}px, ${b.y.toFixed(1)}px) rotate(${b.rotation.toFixed(2)}deg)`;
+  });
+
+  if (anyMoving) {
+    requestAnimationFrame(animateFalling);
+  } else {
+    footerAnimRunning = false;
+  }
 }
 
 function startDrag(e, body) {
@@ -4059,6 +4931,7 @@ function startDrag(e, body) {
   dragInitialItemY = body.y;
 
   body.el.classList.add('dragging');
+  body.el.style.zIndex = '100';
 
   function onMove(me) {
     if (!currentDragged) return;
@@ -4085,12 +4958,16 @@ function startDrag(e, body) {
     if (currentDragged) {
       currentDragged.el.classList.remove('dragging');
       currentDragged.isDragged = false;
-      currentDragged.el.style.zIndex = currentDragged.defaultZ || (currentDragged.isFront ? '35' : '6');
+      currentDragged.el.style.zIndex = currentDragged.defaultZ;
 
       if (!hasMovedFar && currentDragged.data.clickable) {
         executeAction(currentDragged.data.action);
       }
       currentDragged = null;
+      if (!footerAnimRunning) {
+        footerAnimRunning = true;
+        requestAnimationFrame(animateFalling);
+      }
     }
   }
 
@@ -4101,85 +4978,46 @@ function startDrag(e, body) {
 }
 
 function executeAction(action) {
-  if (action === 'resume') {
-    const a = document.createElement('a');
-    a.href = 'aleena_resume.pdf';
-    a.download = 'Aleena_Burney_Resume.pdf';
-    a.click();
-  } else if (action === 'email') {
-    window.location.href = 'mailto:aleenaburney@gmail.com';
-  } else if (action === 'github') {
-    window.open('https://www.github.com/foevertigo', '_blank', 'noopener,noreferrer');
+  if (action === 'email') {
+    window.location.href = 'mailto:aleenafvg@gmail.com';
   } else if (action === 'linkedin') {
-    window.open('https://www.linkedin.com/in/aleena-burney', '_blank', 'noopener,noreferrer');
+    window.open('https://www.linkedin.com/in/aleena-burney-0b445828a/', '_blank', 'noopener,noreferrer');
+  } else if (action === 'github') {
+    window.open('https://github.com/aleenafvg', '_blank', 'noopener,noreferrer');
+  } else if (action === 'resume') {
+    window.open('assets/resume.pdf', '_blank', 'noopener,noreferrer');
   }
 }
 
-function animateFalling() {
-  const gravity = 0.58;
-  const bounce = 0.32;
-  const friction = 0.94;
-  const areaH = fallingArea.offsetHeight || 520;
-  const areaW = fallingArea.offsetWidth || 550;
-  let active = false;
+// Global scroll listener: whenever user scrolls down into the footer, drop items freshly
+let lastScrollY = window.scrollY;
+let footerTriggerArmed = true;
 
-  fallingBodies.forEach(b => {
-    if (b.isDragged) { active = true; return; }
-    if (b.grounded) return;
+function checkFooterScrollDrop() {
+  if (!gravityFooter) return;
+  const rect = gravityFooter.getBoundingClientRect();
+  const currentScrollY = window.scrollY;
+  const isScrollingDown = currentScrollY > lastScrollY;
+  lastScrollY = currentScrollY;
 
-    active = true;
-    b.vy += gravity;
-    b.y += b.vy;
-    b.x += b.vx;
-    b.rotation += b.vr;
-
-    const groundLimit = b.groundTarget || (areaH - 140);
-
-    if (b.y >= groundLimit) {
-      b.y = groundLimit;
-      b.vy *= -bounce;
-      b.vx *= friction;
-      b.vr *= 0.6;
-      if (Math.abs(b.vy) < 1.0) {
-        b.vy = 0; b.vx = 0; b.vr = 0;
-        b.grounded = true;
-      }
-    }
-
-    if (b.x < 10) { b.x = 10; b.vx *= -bounce; }
-    if (b.x > areaW - 150) { b.x = areaW - 150; b.vx *= -bounce; }
-
-    b.el.style.transform = `translate(${b.x}px, ${b.y}px) rotate(${b.rotation}deg)`;
-  });
-
-  if (active || currentDragged) requestAnimationFrame(animateFalling);
-}
-
-// Requirement 2: Detect scrolling into view and scrolling away
-const footerObserver = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      if (!footerInView) {
-        footerInView = true;
-        dropItems();
-      }
-    } else {
-      footerInView = false;
-    }
-  });
-}, { threshold: 0.12 });
-footerObserver.observe(gravityFooter);
-
-// Ensure footer items drop on initial load if visible
-setTimeout(() => {
-  if (!footerInView && gravityFooter) {
-    const rect = gravityFooter.getBoundingClientRect();
-    if (rect.top < window.innerHeight + 400) {
-      footerInView = true;
+  if (rect.top <= window.innerHeight * 0.95 && rect.bottom >= 0) {
+    if (footerTriggerArmed && isScrollingDown) {
+      footerTriggerArmed = false;
       dropItems();
     }
+  } else if (rect.top > window.innerHeight) {
+    footerTriggerArmed = true;
   }
-}, 500);
+}
+
+window.addEventListener('scroll', checkFooterScrollDrop, { passive: true });
+
+document.addEventListener('DOMContentLoaded', () => {
+  dropItems();
+});
+setTimeout(() => {
+  dropItems();
+}, 250);
 
 // ==================== VIEW CONTROLLER (LOAD MENU IN PLACE OF HERO) ====================
 const views = {
@@ -4195,6 +5033,8 @@ function activateView(targetName, smoothScroll = true) {
     if (footer) {
       footer.scrollIntoView({ behavior: 'smooth' });
     }
+    footerArmed = false;
+    dropItems();
     return;
   }
 
@@ -4215,6 +5055,12 @@ function activateView(targetName, smoothScroll = true) {
     if (views[key]) {
       const isActive = (key === validTarget);
       views[key].classList.toggle('active', isActive);
+      // Explicitly enforce display: none !important on inactive views so menu replaces hero completely
+      if (isActive) {
+        views[key].style.removeProperty('display');
+      } else {
+        views[key].style.setProperty('display', 'none', 'important');
+      }
     }
   });
 
