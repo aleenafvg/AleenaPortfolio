@@ -7,9 +7,97 @@
 <title>Aleena Burney — Tech Portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@900&family=Caveat:wght@400;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&family=Special+Elite&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@900&family=Caveat:wght@400;600;700&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Special+Elite&display=swap" rel="stylesheet">
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
 <script src="assets/three.min.js"></script>
+<script>
+// ====================================================================
+// FLOATING DOCK / NATIVE NAVBAR INTERACTIVITY
+// Ported from Framer: https://framer.com/m/Floating-Dock-Native-gmGyg8.js@Pcp3rLgxRHRHvjauCH4S
+// Icons only by default; expands smoothly on hover with fluid highlight pill tracking
+// ====================================================================
+function initFloatingDockNav() {
+  const dock = document.getElementById('floatingDockNav');
+  const highlight = document.getElementById('floatingDockHighlight');
+  if (!dock || !highlight) return;
+
+  const items = Array.from(dock.querySelectorAll('.floating-dock-item'));
+
+  function getActiveItem() {
+    return items.find(el => el.classList.contains('active')) || items[0];
+  }
+
+  function updateHighlight() {
+    // If an item is hovered/expanded, highlight wraps that item; otherwise wraps the active icon
+    const expanded = items.find(el => el.classList.contains('expanded'));
+    const target = expanded || getActiveItem();
+    if (!target) return;
+
+    const itemLeft = target.offsetLeft;
+    const itemWidth = target.offsetWidth;
+    highlight.style.transform = `translate3d(${itemLeft}px, 0, 0)`;
+    highlight.style.width = `${itemWidth}px`;
+    highlight.style.opacity = '1';
+  }
+
+  // Hover expansion: icons only by default; hovered item expands to show label
+  items.forEach(item => {
+    item.addEventListener('mouseenter', () => {
+      items.forEach(other => {
+        if (other !== item) other.classList.remove('expanded');
+      });
+      item.classList.add('expanded');
+      updateHighlight();
+      requestAnimationFrame(updateHighlight);
+      setTimeout(updateHighlight, 70);
+      setTimeout(updateHighlight, 150);
+      setTimeout(updateHighlight, 270);
+    });
+
+    item.addEventListener('click', (e) => {
+      const target = item.dataset.navTarget;
+      if (target) {
+        items.forEach(other => other.classList.remove('active'));
+        item.classList.add('active');
+        updateHighlight();
+        if (typeof activateView === 'function') {
+          activateView(target);
+        }
+      }
+    });
+  });
+
+  // When mouse leaves the dock: collapse back to ICONS ONLY
+  dock.addEventListener('mouseleave', () => {
+    items.forEach(item => item.classList.remove('expanded'));
+    updateHighlight();
+    requestAnimationFrame(updateHighlight);
+    setTimeout(updateHighlight, 70);
+    setTimeout(updateHighlight, 150);
+    setTimeout(updateHighlight, 270);
+  });
+
+  // Global helper called when views switch via any link/button
+  window.updateFloatingDockActive = function(viewId) {
+    const matching = items.find(el => el.dataset.navTarget === viewId);
+    if (matching) {
+      items.forEach(other => other.classList.remove('active'));
+      matching.classList.add('active');
+      updateHighlight();
+    }
+  };
+
+  // Initial layout: all icons compact (no expanded labels by default)
+  items.forEach(item => item.classList.remove('expanded'));
+  setTimeout(updateHighlight, 60);
+  setTimeout(updateHighlight, 220);
+  window.addEventListener('resize', updateHighlight);
+}
+
+document.addEventListener('DOMContentLoaded', initFloatingDockNav);
+setTimeout(initFloatingDockNav, 200);
+
+</script>
 <script src="assets/helvetiker_bold.typeface.js"></script>
 <style>
 /* ======================== CSS VARIABLES & GLOBAL THEME ======================== */
@@ -270,7 +358,7 @@ img { max-width: 100%; display: block; user-select: none; }
 .machine-wrap {
   position: relative; z-index: 2; flex: 1;
   display: flex; flex-direction: column; align-items: center;
-  justify-content: center; padding: 90px 20px 30px;
+  justify-content: center; padding: 115px 20px 0px;
   perspective: 1200px;
 }
 .machine {
@@ -391,7 +479,7 @@ img { max-width: 100%; display: block; user-select: none; }
 /* Caption - Natural, elegant word spacing */
 .hero-caption {
   font-family: 'Instrument Serif', serif;
-  font-size: clamp(1.6rem, 4.2vw, 3.4rem);
+  font-size: clamp(2rem, 5.2vw, 4.2rem);
   color: var(--cream);
   text-align: center;
   line-height: 1.24;
@@ -427,7 +515,7 @@ img { max-width: 100%; display: block; user-select: none; }
 .hero-rail {
   position: relative; z-index: 2;
   display: grid; grid-template-columns: 1fr auto 1fr;
-  align-items: center; padding: 16px 5% 24px;
+  align-items: center; padding: 10px 5% 18px;
   font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
   text-transform: uppercase; letter-spacing: 1.5px;
   color: rgba(255,246,238,0.8);
@@ -503,14 +591,14 @@ img { max-width: 100%; display: block; user-select: none; }
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 1.5px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
   color: var(--cream);
   background: rgba(13, 13, 13, 0.45);
   border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 24px;
+  border-radius: 999px;
   padding: 8px 18px;
   cursor: pointer;
   transition: all 0.25s ease;
@@ -749,7 +837,7 @@ img { max-width: 100%; display: block; user-select: none; }
 
 .intro-section {
   background: var(--red);
-  padding: 85px 5% 65px;
+  padding: 85px 5% 22px;
   min-height: calc(100vh - 60px);
   position: relative;
   display: flex;
@@ -761,11 +849,11 @@ img { max-width: 100%; display: block; user-select: none; }
 .intro-section .section-header {
   margin-top: -24px;
   margin-bottom: 75px;
-  max-width: 800px;
+  max-width:  1050px;
 }
 .intro-section .section-header h2 {
   font-family: 'Instrument Serif', serif;
-  font-size: clamp(2.4rem, 4.5vw, 3.8rem); font-weight: 700;
+  font-size: clamp(3.2rem, 5.8vw, 5.2rem); font-weight: 700;
   color: var(--cream); letter-spacing: -0.8px;
   line-height: 1.1; margin-bottom: 0;
 }
@@ -949,7 +1037,7 @@ img { max-width: 100%; display: block; user-select: none; }
 .intro-section .section-header {
   margin-top: 5px;
   margin-bottom: 24px;
-  max-width: 900px;
+  max-width:  1050px;
   text-align: center;
   position: relative;
   z-index: 85;
@@ -957,7 +1045,7 @@ img { max-width: 100%; display: block; user-select: none; }
 }
 .intro-section .section-header h2 {
   font-family: 'Instrument Serif', Georgia, serif;
-  font-size: clamp(2.2rem, 3.4vw, 3rem);
+  font-size: clamp(3.2rem, 5.8vw, 5.2rem);
   font-weight: 700;
   color: var(--cream);
   letter-spacing: -0.6px;
@@ -1001,6 +1089,12 @@ body.intro-blackout .view-back-bar {
 
 body.intro-blackout {
   overflow: hidden !important;
+}
+body.intro-blackout,
+body.intro-blackout *,
+body.intro-blackout button,
+body.intro-blackout a {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M3 2l6 18 3.5-6.5L19 10 3 2z' fill='%23ffffff' stroke='%23000000' stroke-width='1.2' stroke-linejoin='round'/%3E%3C/svg%3E") 3 2, auto !important;
 }
 body.intro-blackout .hero-nav {
   background: rgba(8, 8, 10, 0.96) !important;
@@ -1665,8 +1759,8 @@ body.intro-blackout .tech-marquee-bar {
   align-items: center;
   justify-content: flex-start;
   width: 100%;
-  margin-top: 56px; /* Lower boundary line lowered down significantly */
-  padding-top: 16px;
+  margin-top: 22px; /* Placed just a little below the menu */
+  padding-top: 14px;
   border-top: 1px dashed rgba(255, 255, 255, 0.12);
 }
 
@@ -1710,7 +1804,7 @@ body.intro-blackout .tech-marquee-bar {
   #viewAbout {
     background: #08080a !important;
     background-color: #08080a !important;
-    padding: 68px 4% 28px !important;
+    padding: 68px 4% 20px !important;
     min-height: calc(100vh - 50px) !important;
     justify-content: flex-start !important;
   }
@@ -1719,7 +1813,7 @@ body.intro-blackout .tech-marquee-bar {
     margin-bottom: 20px !important;
   }
   .intro-section .section-header h2 {
-    font-size: clamp(2.1rem, 7vw, 3rem) !important;
+    font-size: clamp(2.4rem, 8vw, 3.6rem) !important;
   }
   /* In closed state: folder is EXACTLY the same component, not flattened */
   .dossier-folder-dock {
@@ -1934,7 +2028,7 @@ body.intro-blackout .tech-marquee-bar {
 /* ======================== PROJECTS SECTION ======================== */
 .projects-section {
   background: var(--red);
-  padding: 105px 5% 75px;
+  padding: 105px 5% 22px;
   min-height: calc(100vh - 60px);
   position: relative;
   display: flex;
@@ -1944,11 +2038,11 @@ body.intro-blackout .tech-marquee-bar {
 }
 .projects-section .section-header {
   margin-bottom: 40px;
-  max-width: 800px;
+  max-width:  1050px;
 }
 .projects-section .section-header h2 {
   font-family: 'Instrument Serif', serif;
-  font-size: clamp(2.4rem, 4.5vw, 3.8rem); font-weight: 700;
+  font-size: clamp(3.2rem, 5.8vw, 5.2rem); font-weight: 700;
   color: var(--cream); letter-spacing: -0.8px;
   line-height: 1.1; margin-bottom: 0;
 }
@@ -1964,13 +2058,13 @@ body.intro-blackout .tech-marquee-bar {
 
 @media (max-width: 768px) {
   .projects-section {
-    padding: 70px 4% 40px !important;
+    padding: 70px 4% 20px !important;
   }
   .projects-section .section-header {
     margin-bottom: 16px !important;
   }
   .projects-section .section-header h2 {
-    font-size: clamp(2rem, 6.5vw, 2.8rem) !important;
+    font-size: clamp(2.4rem, 8vw, 3.6rem) !important;
   }
   .crate-hero-wrap {
     width: 100% !important;
@@ -2080,19 +2174,21 @@ body.intro-blackout .tech-marquee-bar {
   margin-bottom: 10px;
 }
 .project-card-h .card-h-num {
-  font-family: 'Satoshi', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 1.4rem;
-  font-weight: 900;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 .project-card-h .card-h-year {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 600;
   background: rgba(255,255,255,0.1);
   border: 1px solid rgba(255,255,255,0.18);
   padding: 2px 8px;
   border-radius: 4px;
   color: var(--cream);
+  letter-spacing: 0.02em;
 }
 .project-card-h .card-h-title {
   font-family: 'Instrument Serif', serif;
@@ -2103,9 +2199,9 @@ body.intro-blackout .tech-marquee-bar {
   margin-bottom: 8px;
 }
 .project-card-h .card-h-desc {
-  font-family: 'Satoshi', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 0.88rem;
-  line-height: 1.45;
+  line-height: 1.5;
   color: rgba(255,246,238,0.75);
   margin-bottom: 16px;
   flex: 1;
@@ -2118,18 +2214,19 @@ body.intro-blackout .tech-marquee-bar {
   border-top: 1px solid rgba(255,255,255,0.1);
 }
 .project-card-h .card-h-photos {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 600;
+  letter-spacing: 0.05em;
   color: rgba(255,246,238,0.6);
   display: inline-flex;
   align-items: center;
   gap: 5px;
 }
 .project-card-h .card-h-cta { display: none !important; 
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--cream);
   letter-spacing: 0.5px;
 }
@@ -2170,10 +2267,11 @@ body.intro-blackout .tech-marquee-bar {
   border: 2px solid var(--navy); border-bottom: none;
   border-radius: 10px 10px 0 0;
   padding: 8px 14px;
-  font-family: 'Satoshi', sans-serif; font-weight: 900;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-weight: 700;
   text-transform: uppercase;
   font-size: clamp(0.55rem, 2cqw, 0.75rem);
-  color: var(--navy); letter-spacing: 0.5px;
+  color: var(--navy); letter-spacing: 0.04em;
   box-shadow: 0 -2px 6px rgba(0,0,0,0.15);
 }
 .folder-face {
@@ -2184,9 +2282,10 @@ body.intro-blackout .tech-marquee-bar {
   height: calc(100% - 34px); padding: 14px;
 }
 .folder-face small {
-  font-family: 'Satoshi', sans-serif; font-weight: 700;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-weight: 600;
   font-size: clamp(0.5rem, 1.3cqw, 0.65rem);
-  text-transform: uppercase; letter-spacing: 1px;
+  text-transform: uppercase; letter-spacing: 0.05em;
   color: var(--navy); opacity: 0.8;
 }
 .folder-logo {
@@ -2195,9 +2294,10 @@ body.intro-blackout .tech-marquee-bar {
   line-height: 1; letter-spacing: -1px; color: var(--navy); font-weight: 700;
 }
 .folder-open {
-  font-family: 'Satoshi', sans-serif; font-weight: 700;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-weight: 600;
   font-size: clamp(0.45rem, 1.2cqw, 0.65rem);
-  text-transform: uppercase; letter-spacing: 1px;
+  text-transform: uppercase; letter-spacing: 0.05em;
   color: var(--navy); opacity: 0.7;
 }
 
@@ -2232,22 +2332,23 @@ dialog.case-overlay::backdrop {
   gap: 12px;
 }
 .dialog-number {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 0.82rem; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 2px;
+  text-transform: uppercase; letter-spacing: 0.08em;
   color: var(--red);
 }
 .dialog-year-badge {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.78rem; font-weight: 800;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.78rem; font-weight: 700;
   color: #111; background: var(--cream);
   padding: 3px 10px; border-radius: 6px;
-  letter-spacing: 1px;
+  letter-spacing: 0.04em;
 }
 .dialog-close {
   width: 36px; height: 36px; border-radius: 50%;
   border: 1px solid #444; background: #222;
   color: var(--cream); font-size: 16px; font-weight: 700;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; transition: all 0.2s ease;
 }
@@ -2262,9 +2363,10 @@ dialog.case-overlay::backdrop {
   color: #ffffff;
 }
 .dialog-type {
-  font-family: 'Satoshi', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 0.95rem; color: rgba(255,246,238,0.7);
   margin-bottom: 22px; font-weight: 500;
+  letter-spacing: -0.01em;
 }
 
 /* Image Carousel */
@@ -2331,12 +2433,12 @@ dialog.case-overlay::backdrop {
   background: rgba(10,10,10,0.85);
   border: 1px solid rgba(255,255,255,0.22);
   color: var(--cream);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   padding: 4px 11px;
   border-radius: 20px;
-  letter-spacing: 1px;
+  letter-spacing: 0.04em;
   z-index: 5;
   backdrop-filter: blur(6px);
 }
@@ -2381,11 +2483,12 @@ dialog.case-overlay::backdrop {
   border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 .dialog-narrative {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 1rem;
   line-height: 1.8;
   color: rgba(255,246,238,0.92);
   margin: 0;
+  letter-spacing: -0.01em;
 }
 
 /* Skillset */
@@ -2393,10 +2496,10 @@ dialog.case-overlay::backdrop {
   margin-bottom: 24px;
 }
 .dialog-section-label {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 2px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   color: rgba(255,246,238,0.6);
   margin-bottom: 10px;
   text-transform: uppercase;
@@ -2412,9 +2515,10 @@ dialog.case-overlay::backdrop {
   border: 1px solid rgba(128,0,0,0.45);
   border-radius: 20px;
   font-size: 0.82rem;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color: var(--cream);
-  font-weight: 600;
+  font-weight: 500;
+  letter-spacing: -0.01em;
 }
 
 /* GitHub Link */
@@ -2434,10 +2538,10 @@ dialog.case-overlay::backdrop {
   color: #0d0d0d;
   border-radius: 10px;
   text-decoration: none;
-  font-family: 'Satoshi', sans-serif;
-  font-weight: 800;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-weight: 700;
   font-size: 0.95rem;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.02em;
   transition: all 0.25s ease;
   box-shadow: 0 4px 14px rgba(0,0,0,0.35);
 }
@@ -2448,10 +2552,10 @@ dialog.case-overlay::backdrop {
   box-shadow: 0 6px 20px rgba(128,0,0,0.45);
 }
 
-/* ======================== 3D CERTIFICATES WHEEL ======================== */
+/* ======================== DEPTH CAROUSEL (FRAMER COMPONENT: https://framer.com/m/DepthCarousel-7GyVY9.js@XOC6NPWNoiTAqdMS7bgQ) ======================== */
 .certs-section {
   background: var(--red);
-  padding: 105px 5% 75px;
+  padding: 105px 0 22px;
   min-height: calc(100vh - 60px);
   position: relative;
   display: flex;
@@ -2460,183 +2564,187 @@ dialog.case-overlay::backdrop {
   justify-content: center;
   text-align: center;
   overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.certs-section .view-back-bar,
+.certs-section .section-header,
+.certs-section .wheel-controls,
+.certs-section .dragable-dots-row {
+  padding-left: 5%;
+  padding-right: 5%;
+  box-sizing: border-box;
 }
 .certs-section .section-header {
-  margin-bottom: 20px;
-  max-width: 800px;
+  margin-bottom: 12px;
+  max-width:  1050px;
 }
 .certs-section .section-header h2 {
   font-family: 'Instrument Serif', serif;
-  font-size: clamp(2.4rem, 4.5vw, 3.8rem); font-weight: 700;
-  color: var(--cream); letter-spacing: -0.8px;
-  line-height: 1.1; margin-bottom: 0;
+  font-size: clamp(3.2rem, 5.8vw, 5.2rem);
+  font-weight: 700;
+  color: var(--cream);
+  letter-spacing: -0.8px;
+  line-height: 1.1;
+  margin-bottom: 0;
 }
 .certs-section .section-header h2 span {
   color: var(--muted);
 }
-.certs-section .section-header p {
+
+/* ======================== CERTIFICATE BRANDS ROW ======================== */
+.certs-brands-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 14px;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-size: clamp(13px, 1.4vw, 16px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  line-height: 1.6;
+}
+.cert-brand-item {
+  position: relative;
+  display: inline-block;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-size: clamp(13px, 1.4vw, 16px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: #ffffff !important;
+  background: transparent !important;
+  cursor: pointer;
+  padding: 3px 6px;
+  border-radius: 4px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+.cert-brand-item:hover {
+  transform: translateY(-2px);
+}
+.cert-brand-sep {
   display: none !important;
 }
 
-.certs-section-wrap {
-  width: 100%;
-  max-width: 1260px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 2;
+/* Certificate Names: White font by default, turns black when hovered or active on that certificate, no background, no glow */
+.cert-brand-item.brand-active,
+.cert-brand-item:hover,
+.cert-brand-item[data-brand].brand-active,
+.cert-brand-item[data-brand]:hover {
+  color: #000000 !important;
+  background: transparent !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+  transform: translateY(-2px) scale(1.05);
 }
 
-/* ======================== CURVE FLOW CAROUSEL (FRAMER) ======================== */
-.curve-flow-container {
-  position: relative;
-  width: 100%;
-  max-width: 1400px;
-  margin: 18px auto 14px;
-  padding: 10px 0;
-  overflow: visible;
-  user-select: none;
-  -webkit-user-select: none;
+/* ====================================================================
+   FRAMER DRAGGABLE 3D CAROUSEL
+   Ported directly from: https://framer.com/m/DragableCarousel-ADAPEh.js@fXOJxTG2NAtXIGjIOPmn
+   3D Coverflow perspective with velocity physics snap
+   ==================================================================== */
+
+:root {
+  --dc-slide-w: clamp(290px, 28vw, 450px);
+  --dc-slide-h: clamp(200px, 19.3vw, 310px);
+  --dc-gap: 22px;
 }
 
-.curve-flow-viewport {
+.dragable-carousel-container {
   position: relative;
   width: 100%;
-  height: 310px;
-  perspective: 1200px;
-  perspective-origin: 50% 50%;
+  max-width: 100%;
+  left: 0;
+  right: 0;
+  margin-left: 0;
+  margin-right: 0;
+  height: clamp(390px, 52vh, 530px);
   display: flex;
   align-items: center;
-  justify-content: center;
-  cursor: grab;
-  touch-action: pan-y;
-  overflow: visible;
-}
-.curve-flow-viewport:active {
-  cursor: grabbing;
-}
-
-.curve-flow-track {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-
-.curve-flow-card {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 320px;
-  height: 220px;
-  margin-left: -160px;
-  margin-top: -110px;
-  transform-style: preserve-3d;
-  will-change: transform, filter;
-  border-radius: 0 !important;
-  background: #0d0d0d;
-  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.14);
-  cursor: pointer;
+  justify-content: flex-start;
   overflow: hidden;
-  transition: box-shadow 0.2s ease;
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+  perspective: 1000px;
+  perspective-origin: 50% 50%;
+  margin-top: 14px;
+  margin-bottom: 6px;
 }
 
-.curve-flow-card:hover {
-  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.85), 0 0 0 1.5px rgba(255, 255, 255, 0.45);
+
+.dragable-carousel-track {
+  display: flex;
+  gap: var(--dc-gap);
+  align-items: center;
+  position: relative;
+  will-change: transform;
+  transform-style: preserve-3d;
+  pointer-events: none;
 }
 
-.curve-flow-card img {
+.dragable-slide {
+  position: relative;
+  width: var(--dc-slide-w);
+  height: var(--dc-slide-h);
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+  will-change: transform, opacity;
+  cursor: pointer;
+  background: #0d0d0d;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.12);
+  transition: box-shadow 0.26s ease, border-color 0.26s ease;
+  transform-style: preserve-3d;
+  pointer-events: auto;
+}
+
+.dragable-slide::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0) 50%);
+  pointer-events: none;
+  border-radius: 11px;
+}
+
+.dragable-slide:hover {
+  box-shadow: 0 26px 65px rgba(0, 0, 0, 0.95), 0 0 25px rgba(255, 255, 255, 0.32);
+}
+
+.dragable-slide img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
   pointer-events: none;
   user-select: none;
-  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  border-radius: 11px;
 }
 
-@media (max-width: 768px) {
-  .curve-flow-viewport {
-    height: 230px;
-    perspective: 850px;
-  }
-  .curve-flow-card {
-    width: 220px;
-    height: 155px;
-    margin-left: -110px;
-    margin-top: -77.5px;
-  }
-}
-
-.wheel-controls {
-    margin-top: 10px !important;
-    gap: 12px !important;
-  }
-  .wheel-btn {
-    width: 36px !important;
-    height: 36px !important;
-    font-size: 14px !important;
-  }
-  .wheel-status {
-    font-size: 9.5px !important;
-  }
-}
-
-.wheel {
-  position: relative;
-  width: 195px;
-  height: 135px;
-  transform-style: preserve-3d;
-  transform: rotateX(-10deg) rotateY(0deg);
-}
-
-.wheel-card {
-  position: absolute;
-  width: 195px;
-  height: 135px;
-  left: 0;
-  top: 0;
-  border-radius: 0 !important;
-  border: none !important;
-  overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
-  cursor: pointer;
-  backface-visibility: visible;
-  background: #0d0d0d;
-  transition: filter 0.2s ease;
-}
-
-.wheel-card:hover {
-  filter: brightness(1.2);
-  z-index: 999;
-}
-
-.wheel-card img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 0 !important;
-  border: none !important;
-  pointer-events: none;
-  display: block;
-}
-
+/* Controls below carousel */
 .wheel-controls {
   display: flex;
   gap: 20px;
   justify-content: center;
   align-items: center;
-  margin-top: 18px;
+  margin-top: 14px;
   position: relative;
-  z-index: 5;
+  z-index: 10;
 }
 
 .wheel-btn {
   width: 46px;
   height: 46px;
   border-radius: 50%;
-  background: rgba(13, 13, 13, 0.65);
-  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  background: rgba(13, 13, 13, 0.7);
+  border: 1.5px solid rgba(255, 255, 255, 0.28);
   color: var(--cream);
   font-size: 18px;
   font-weight: 700;
@@ -2649,84 +2757,192 @@ dialog.case-overlay::backdrop {
 }
 
 .wheel-btn:hover {
-  background: var(--ink);
-  border-color: rgba(255, 255, 255, 0.7);
-  transform: scale(1.1);
+  background: #000;
+  border-color: rgba(255, 255, 255, 0.8);
+  transform: scale(1.08);
 }
 
 .wheel-status {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  color: rgba(255, 246, 238, 0.75);
-  text-transform: uppercase;
+  display: none !important;
+}
+
+/* Pagination Dots */
+.dragable-dots-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 12px;
+  margin-bottom: 4px;
+  position: relative;
+  z-index: 10;
+}
+
+.dragable-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: var(--cream);
+  opacity: 0.3;
+  transform: scale(1);
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease;
+}
+
+.dragable-dot.active {
+  opacity: 1;
+  transform: scale(1.45);
+  background: #ffffff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.85);
+}
+
+@media (max-width: 768px) {
+  :root {
+    --dc-slide-w: clamp(250px, 65vw, 340px);
+    --dc-slide-h: clamp(172px, 44.8vw, 235px);
+    --dc-gap: 16px;
+  }
+  .dragable-carousel-container {
+    height: clamp(330px, 44vh, 430px);
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --dc-slide-w: clamp(210px, 76vw, 280px);
+    --dc-slide-h: clamp(145px, 52.4vw, 193px);
+    --dc-gap: 12px;
+  }
+  .dragable-carousel-container {
+    height: clamp(290px, 38vh, 370px);
+  }
+  .wheel-btn {
+    width: 38px;
+    height: 38px;
+    font-size: 15px;
+  }
+  .wheel-status {
+  display: none !important;
+}
 }
 
 /* Certificate Lightbox */
 .cert-lightbox {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.92);
-  backdrop-filter: blur(10px);
-  display: none; align-items: center; justify-content: center;
-  z-index: 100000; padding: 24px;
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999999;
+  padding: 24px;
+  box-sizing: border-box;
+  opacity: 0;
+  transition: opacity 0.22s ease;
 }
-.cert-lightbox.open { display: flex; }
+.cert-lightbox.open {
+  display: flex !important;
+  opacity: 1;
+}
 .cert-lightbox-inner {
-  position: relative; max-width: 960px; max-height: 90vh;
+  position: relative;
+  max-width: 95vw;
+  max-height: 92vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: certZoomIn 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes certZoomIn {
+  from { transform: scale(0.92); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 .cert-lightbox-close {
-  position: absolute; top: -18px; right: -18px;
-  width: 40px; height: 40px; border-radius: 50%;
-  background: var(--red); color: #fff;
-  border: 2px solid var(--cream);
-  font-size: 18px; font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; z-index: 2;
-  transition: transform 0.2s;
+  position: absolute;
+  top: -18px;
+  right: -18px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #111;
+  color: #fff;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1000001;
+  transition: transform 0.2s ease, background 0.2s ease;
 }
 .cert-lightbox-close:hover {
   transform: rotate(90deg) scale(1.1);
+  background: #FA582D;
 }
 .cert-lightbox img {
-  max-width: 90vw; max-height: 85vh;
+  max-width: 92vw;
+  max-height: 88vh;
+  width: auto;
+  height: auto;
   object-fit: contain;
-  border-radius: 0 !important;
+  border-radius: 8px;
   border: none !important;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+  box-shadow: 0 25px 75px rgba(0, 0, 0, 0.95), 0 0 1px 1px rgba(255, 255, 255, 0.15);
+}
+
+@media (max-width: 768px) {
+  .cert-lightbox {
+    padding: 12px !important;
+  }
+  .cert-lightbox-inner {
+    width: 100% !important;
+    max-width: 100vw !important;
+    max-height: 94vh !important;
+  }
+  .cert-lightbox img {
+    max-width: 98vw !important;
+    max-height: 84vh !important;
+    width: 100% !important;
+    height: auto !important;
+    object-fit: contain !important;
+  }
+  .cert-lightbox-close {
+    position: fixed !important;
+    top: 16px !important;
+    right: 16px !important;
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 24px !important;
+    background: rgba(18, 18, 18, 0.92) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.75) !important;
+  }
 }
 
 /* ======================== PERSISTENT GRAVITY FOOTER ======================== */
 .bottom-credits-bar {
-  background: #000000 !important;
-  width: 100%;
-  padding: 18px 5% 24px;
-  text-align: left !important; /* Shifted made by aleena to the left */
-  position: relative;
-  z-index: 30;
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
-  user-select: none;
-  box-shadow: 0 1400px 0 1400px #000000; /* Guarantees pure black down to the very bottom, no red in sight */
-}
-.bottom-credits-bar span {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 2.5px;
-  color: rgba(255, 255, 255, 0.75);
-  text-transform: lowercase;
+  display: none !important;
 }
 
 .gravity-footer {
   position: relative;
-  background: var(--red);
+  background: #000000 !important;
   min-height: 440px;
   overflow: hidden;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.85);
+  border-top: none !important;
+  box-shadow: 0 1400px 0 1400px #000000; /* Pure black extends downward */
 }
 
 @media (max-width: 768px) {
   .gravity-footer {
-    border-top: 1.5px solid rgba(255, 255, 255, 0.95) !important; /* Prominent white line before footer starts on mobile */
+    background: #000000 !important;
+    border-top: none !important;
   }
 }
 .footer-inner {
@@ -2808,6 +3024,8 @@ dialog.case-overlay::backdrop {
 
 .falling-item {
   position: absolute;
+  top: 0;
+  left: 0;
   display: block;
   z-index: 4;
   touch-action: none;
@@ -2815,6 +3033,8 @@ dialog.case-overlay::backdrop {
   will-change: transform;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  transform-origin: center center;
+  contain: layout style;
   border: none !important;
   outline: none !important;
   background: transparent !important;
@@ -2845,10 +3065,10 @@ dialog.case-overlay::backdrop {
   /* Mobile: Single unified section without dividing borders */
   .gravity-footer {
     position: relative;
-    background: var(--red);
+    background: #000000 !important;
     min-height: 560px;
     overflow: hidden;
-    border-top: 1px solid rgba(255,255,255,0.12);
+    border-top: none !important;
   }
   .footer-inner {
     display: flex !important;
@@ -2892,6 +3112,487 @@ dialog.case-overlay::backdrop {
 @media (max-width: 560px) {
   .falling-item img { width: 85px !important; }
 }
+/* ======================== INTER FONT HARMONIZATION (FRAMER FLOATING DOCK COMPONENT) ======================== */
+/* User Request: use the same font used in Floating Dock ('Inter') for:
+   1. The white menu (.hero-menu-card, .section-menu-options, .hm-title, .hm-pill, .hm-num, .hm-arrow, .hm-sub)
+   2. The clock numbers (.nav-clock)
+   3. "tech, ai , cybersecurity" (.rail-left)
+   4. "(email, github, linkrdin)" (.footer-channels)
+   5. Numbering 00/05 above the roller counter in hero section (.scene-plate, #scenePlate)
+*/
+
+.hero-menu-options,
+.section-menu-options,
+.hero-menu-card,
+.hm-title,
+.hm-pill,
+.hm-num,
+.hm-sub,
+.hm-arrow {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  letter-spacing: -0.02em;
+}
+.hm-title {
+  font-weight: 700 !important;
+  letter-spacing: -0.025em !important;
+}
+.hm-pill {
+  font-weight: 500 !important;
+  letter-spacing: -0.01em !important;
+}
+.hm-num {
+  font-weight: 600 !important;
+  letter-spacing: -0.02em !important;
+}
+
+/* 2. Clock numbers & Back to Home button */
+.nav-clock,
+.view-back-btn {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.02em !important;
+}
+
+/* 3. "Tech · AI · Full-Stack · Cybersecurity" */
+.rail-left,
+#heroRail .rail-left {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.02em !important;
+  text-transform: none !important;
+  font-size: 13px !important;
+}
+
+/* 4. "(email, github, resume, linkedin)" */
+.footer-channels,
+.footer-left .footer-channels {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.02em !important;
+  font-size: 14px !important;
+}
+
+/* 5. Numbering 00/05 above the roller counter in hero section */
+.scene-plate,
+#scenePlate {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.02em !important;
+  font-size: 12px !important;
+}
+
+/* 6. Works section & inside of project folder font harmonization (matching clock timer font 'Inter', except headings) */
+.projects-section,
+dialog.case-overlay,
+.folder-tab,
+.folder-face small,
+.folder-open,
+.project-card-h,
+.project-card-h .card-h-num,
+.project-card-h .card-h-year,
+.project-card-h .card-h-desc,
+.project-card-h .card-h-photos,
+.project-card-h .card-h-cta,
+.dialog-header-bar,
+.dialog-badges,
+.dialog-number,
+.dialog-year-badge,
+.dialog-type,
+.dialog-close,
+.carousel-counter,
+.dialog-narrative,
+.dialog-narrative-section,
+.dialog-skills-section,
+.dialog-section-label,
+.dialog-tech,
+.dialog-tech span,
+.dialog-github-section,
+.dialog-github-btn {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+/* Headings in Works section and project folder strictly retain serif heading font */
+.projects-section .section-header h2,
+.project-card-h .card-h-title,
+.folder-logo,
+.dialog-title {
+  font-family: 'Instrument Serif', serif !important;
+}
+
+/* ======================== FLOATING DOCK / NATIVE (FRAMER: https://framer.com/m/Floating-Dock-Native-gmGyg8.js@Pcp3rLgxRHRHvjauCH4S) ======================== */
+.hero-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 4%;
+  min-height: 60px;
+  background: rgba(227, 23, 10, 0.96);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.85);
+}
+
+.hero-nav .nav-logo {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.hero-nav .nav-right {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+.floating-dock-nav {
+  position: relative;
+  left: auto;
+  bottom: auto;
+  transform: none;
+  margin: 0 auto;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
+  background-color: rgb(17, 17, 17);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  padding: 6px;
+  height: 48px;
+  box-sizing: border-box;
+  box-shadow: none !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 999999;
+  user-select: none;
+  cursor: pointer;
+  transition: box-shadow 0.25s ease;
+}
+
+.floating-dock-nav:hover {
+  box-shadow: none !important;
+}
+
+/* Topmost Navbar - Remove All Shadows */
+.hero-nav,
+.hero-nav *,
+.floating-dock-nav,
+.floating-dock-nav:hover,
+.floating-dock-highlight,
+.floating-dock-item {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+
+/* Sliding selection highlight */
+.floating-dock-highlight {
+  position: absolute;
+  top: 6px;
+  left: 0;
+  width: 36px;
+  height: 36px;
+  background-color: rgba(255, 255, 255, 0.14);
+  border-radius: 9px;
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform, width;
+  transition: transform 0.26s cubic-bezier(0.22, 1, 0.36, 1),
+              width 0.26s cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 0.2s ease;
+}
+
+.floating-dock-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0px;
+  height: 36px;
+  padding: 0 10px;
+  border-radius: 9px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.72);
+  cursor: pointer;
+  z-index: 1;
+  text-decoration: none;
+  overflow: hidden;
+  transition: color 0.2s ease, gap 0.26s cubic-bezier(0.22, 1, 0.36, 1), padding 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.floating-dock-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  stroke: rgba(255, 255, 255, 0.72);
+  display: block;
+  pointer-events: none;
+  transition: stroke 0.2s ease, transform 0.22s ease;
+}
+
+.floating-dock-label {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  white-space: nowrap;
+  pointer-events: none;
+  display: inline-block;
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  transform: translateX(-4px);
+  transition: max-width 0.26s cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 0.2s ease,
+              transform 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Active state (compact icon by default) */
+.floating-dock-item.active {
+  color: #ffffff;
+}
+.floating-dock-item.active .floating-dock-icon {
+  stroke: #ffffff;
+}
+
+/* Expanded state on hover - reveals label smoothly */
+.floating-dock-item.expanded {
+  color: #ffffff;
+  gap: 6px;
+  padding: 0 12px;
+}
+.floating-dock-item.expanded .floating-dock-icon {
+  stroke: #ffffff;
+  transform: scale(1.08);
+}
+.floating-dock-item.expanded .floating-dock-label {
+  max-width: 80px;
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@media (max-width: 768px) {
+  .floating-dock-nav {
+    padding: 5px;
+    height: 44px;
+    gap: 2px;
+  }
+  .floating-dock-item {
+    padding: 0 9px;
+    height: 34px;
+    gap: 0;
+  }
+  .floating-dock-label {
+    display: none !important;
+  }
+  .floating-dock-highlight {
+    top: 5px;
+    height: 34px;
+  }
+}
+
+/* ====================================================================
+   FRAMER GOOEY NAVBAR COMPONENT
+   Ported from: https://framer.com/m/GooeyNavbar-TLFB27.js@bCvGv6MKodKnLTwoldCF
+   True circular arc pills & tangent fillet waists with spring physics
+   ==================================================================== */
+
+.gooey-navbar-wrap {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 28px auto 0;
+  z-index: 10;
+  user-select: none;
+}
+
+.hero .gooey-navbar-wrap {
+  margin: 42px auto 4px;
+}
+
+.gooey-navbar {
+  position: relative;
+  display: inline-block;
+  padding: 0;
+  filter: drop-shadow(0 14px 34px rgba(0, 0, 0, 0.45));
+}
+
+.gooey-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.gooey-base-path {
+  fill: #FFFFFF;
+  fill-rule: nonzero;
+}
+
+.gooey-glow-path {
+  fill-rule: nonzero;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.gooey-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.gooey-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 22px;
+  min-height: 44px;
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  color: #111111;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  box-sizing: border-box;
+  appearance: none;
+  white-space: nowrap;
+  will-change: transform, color;
+  transition: color 0.15s ease;
+}
+
+.gooey-item:focus-visible {
+  outline: 2px solid #111111;
+  outline-offset: 2px;
+}
+
+.gooey-label {
+  display: inline-block;
+  pointer-events: none;
+}
+
+.gooey-dot {
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: #111111;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.gooey-item.active .gooey-dot {
+  opacity: 1;
+}
+
+/* Step 10 specific alignment */
+.intro-step[data-step="10"] .gooey-navbar-wrap {
+  margin: 18px 0 6px 0;
+  justify-content: flex-start;
+}
+
+/* About Red View (Below Folder) specific styling - sits just a little above bottom line */
+.about-red-gooey-wrap {
+  margin: clamp(40px, 8vh, 85px) auto 0;
+  position: relative;
+  z-index: 86;
+}
+
+.intro-section:not(.intro-blackout) .dossier-stage-wrap,
+.intro-section .dossier-stage:not(.is-open) {
+  min-height: auto !important;
+}
+
+body.intro-blackout .about-red-gooey-wrap,
+html.intro-blackout .about-red-gooey-wrap {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+  .gooey-navbar-wrap {
+    margin: 20px auto 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 6px 10px;
+    justify-content: center;
+  }
+  .about-red-gooey-wrap {
+    margin: 20px auto 0;
+  }
+  .intro-step[data-step="10"] .gooey-navbar-wrap {
+    justify-content: flex-start;
+    padding: 6px 0;
+  }
+  .gooey-nav {
+    gap: 8px;
+  }
+  .gooey-item {
+    padding: 9px 14px;
+    font-size: 11px;
+    min-height: 38px;
+  }
+  .gooey-dot {
+    bottom: 4px;
+    width: 3.5px;
+    height: 3.5px;
+  }
+}
+
+
+/* ====================================================================
+   FRAMER CURSOR DOT TRAIL COMPONENT
+   Ported directly from: https://www.framer.com/marketplace/components/cursor-dot-trail/
+   ==================================================================== */
+#cursorTrailCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  pointer-events: none !important;
+  z-index: 99999999;
+}
+
+@media (pointer: coarse) {
+  #cursorTrailCanvas {
+    display: none !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -2981,13 +3682,30 @@ dialog.case-overlay::backdrop {
 <!-- ============ FIXED TOP NAVIGATION (ALWAYS AVAILABLE) ============ -->
 <nav class="hero-nav" id="heroNav" aria-label="Main Portfolio Navigation">
   <button type="button" class="nav-logo" data-nav-target="home">aleena<sup>®</sup></button>
-  <ul class="nav-links">
-    <li><button type="button" class="nav-link active" data-nav-target="home"><span>Home</span><span>Home</span></button></li>
-    <li><button type="button" class="nav-link" data-nav-target="about"><span>About</span><span>About</span></button></li>
-    <li><button type="button" class="nav-link" data-nav-target="projects"><span>Work <sup>06</sup></span><span>Work <sup>06</sup></span></button></li>
-    <li><button type="button" class="nav-link" data-nav-target="certs"><span>Certs <sup>16</sup></span><span>Certs <sup>16</sup></span></button></li>
-    <li><button type="button" class="nav-link" data-nav-target="contact"><span>Contact &rarr;</span><span>Contact &rarr;</span></button></li>
-  </ul>
+    <!-- FLOATING DOCK / NATIVE NAVBAR (REPLACED TOP NAV: https://framer.com/m/Floating-Dock-Native-gmGyg8.js@Pcp3rLgxRHRHvjauCH4S) -->
+  <div class="floating-dock-nav" id="floatingDockNav" aria-label="Section navigation">
+    <div class="floating-dock-highlight" id="floatingDockHighlight"></div>
+    <button type="button" class="floating-dock-item active" data-nav-target="home" aria-label="Home">
+      <svg class="floating-dock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+      <span class="floating-dock-label">Home</span>
+    </button>
+    <button type="button" class="floating-dock-item" data-nav-target="about" aria-label="About">
+      <svg class="floating-dock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"></circle><path d="M20 21a8 8 0 0 0-16 0"></path></svg>
+      <span class="floating-dock-label">About</span>
+    </button>
+    <button type="button" class="floating-dock-item" data-nav-target="projects" aria-label="Work">
+      <svg class="floating-dock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="M3 9h18"></path><path d="M9 21V9"></path></svg>
+      <span class="floating-dock-label">Work</span>
+    </button>
+    <button type="button" class="floating-dock-item" data-nav-target="certs" aria-label="Certs">
+      <svg class="floating-dock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"></circle><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path></svg>
+      <span class="floating-dock-label">Certs</span>
+    </button>
+    <button type="button" class="floating-dock-item" data-nav-target="contact" aria-label="Contact">
+      <svg class="floating-dock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+      <span class="floating-dock-label">Contact</span>
+    </button>
+  </div>
   <div class="nav-right">
     <button class="sound-toggle" id="soundToggle" aria-label="Toggle sound">
       <span class="bar"></span><span class="bar"></span><span class="bar"></span>
@@ -3028,57 +3746,44 @@ dialog.case-overlay::backdrop {
         <div class="hero-caption" id="heroCaption" aria-live="polite"></div>
 
         <!-- HERO MENU OPTIONS (MENTION ALL MENUS IN HERO SECTION) -->
-        <div class="hero-menu-options" id="heroMenuOptions" aria-label="Portfolio Menu Options">
-          <button type="button" class="hero-menu-card" data-nav-target="about" aria-label="Open About Me">
-            <div class="hm-card-top">
-              <span class="hm-num">01</span>
-              <span class="hm-pill">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                <span>PROFILE</span>
-              </span>
-              <span class="hm-arrow">↗</span>
-            </div>
-            <div class="hm-title">ABOUT ME</div>
-          </button>
-
-          <button type="button" class="hero-menu-card" data-nav-target="projects" aria-label="Open Projects">
-            <div class="hm-card-top">
-              <span class="hm-num">02</span>
-              <span class="hm-pill">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-                <span>ARCHIVE</span>
-              </span>
-              <span class="hm-arrow">↗</span>
-            </div>
-            <div class="hm-title">WORK<span class="hm-sub"> // 06</span></div>
-          </button>
-
-          <button type="button" class="hero-menu-card" data-nav-target="certs" aria-label="Open Certificates">
-            <div class="hm-card-top">
-              <span class="hm-num">03</span>
-              <span class="hm-pill">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"></circle><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"></path></svg>
-                <span>CREDENTIALS</span>
-              </span>
-              <span class="hm-arrow">↗</span>
-            </div>
-            <div class="hm-title">CERTS<span class="hm-sub"> // 16</span></div>
-          </button>
-
-          <button type="button" class="hero-menu-card" data-nav-target="contact" aria-label="Open Contact">
-            <div class="hm-card-top">
-              <span class="hm-num">04</span>
-              <span class="hm-pill">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                <span>CONNECT</span>
-              </span>
-              <span class="hm-arrow">↓</span>
-            </div>
-            <div class="hm-title">CONTACT</div>
-          </button>
-        </div>
-
-      </div>
+        <!-- FRAMER GOOEY NAVBAR COMPONENT (Ported from: https://framer.com/m/GooeyNavbar-TLFB27.js@bCvGv6MKodKnLTwoldCF) -->
+        <div class="gooey-navbar-wrap" data-active-target="home" aria-label="Portfolio Navigation">
+          <div class="gooey-navbar">
+            <svg class="gooey-svg" aria-hidden="true" focusable="false">
+              <defs>
+                <radialGradient id="goo-glow-home" gradientUnits="userSpaceOnUse" cx="-9999" cy="-9999" r="95">
+                  <stop offset="0" stop-color="#EFF4C8" stop-opacity="1" />
+                  <stop offset="0.45" stop-color="#EFF4C8" stop-opacity="0.55" />
+                  <stop offset="1" stop-color="#EFF4C8" stop-opacity="0" />
+                </radialGradient>
+              </defs>
+              <path class="gooey-base-path" fill="#FFFFFF" fill-rule="nonzero" />
+              <path class="gooey-glow-path" fill="url(#goo-glow-home)" fill-rule="nonzero" />
+            </svg>
+            <nav class="gooey-nav" aria-label="Section Navigation">
+              <button type="button" class="gooey-item active" data-nav-target="home" aria-label="Go to Home">
+                <span class="gooey-label">HOME</span>
+                <span class="gooey-dot" aria-hidden="true"></span>
+              </button>
+              <button type="button" class="gooey-item" data-nav-target="about" aria-label="Open About Me">
+                <span class="gooey-label">ABOUT</span>
+                <span class="gooey-dot" aria-hidden="true"></span>
+              </button>
+              <button type="button" class="gooey-item" data-nav-target="projects" aria-label="Open Work Archive">
+                <span class="gooey-label">WORK</span>
+                <span class="gooey-dot" aria-hidden="true"></span>
+              </button>
+              <button type="button" class="gooey-item" data-nav-target="certs" aria-label="Open Credentials">
+                <span class="gooey-label">CERTS</span>
+                <span class="gooey-dot" aria-hidden="true"></span>
+              </button>
+              <button type="button" class="gooey-item" data-nav-target="contact" aria-label="Connect and Contact">
+                <span class="gooey-label">CONTACT</span>
+                <span class="gooey-dot" aria-hidden="true"></span>
+              </button>
+            </nav>
+          </div>
+        </div></div>
     </div>
 
     <div class="hero-rail" id="heroRail">
@@ -3161,29 +3866,44 @@ dialog.case-overlay::backdrop {
           </div>
           <div class="intro-step" data-step="10">
             <p class="step-text">wanna know more? <img class="apple-emoji" src="assets/apple-emojis/chat.png" alt="💬" title="Chat"></p>
-            <div class="intro-menu-options" aria-label="Portfolio Menus">
-              <button type="button" class="intro-menu-btn" data-nav-target="home">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-                <span class="btn-num">00</span>
-                <span>Home</span>
+            <!-- FRAMER GOOEY NAVBAR COMPONENT (Ported from: https://framer.com/m/GooeyNavbar-TLFB27.js@bCvGv6MKodKnLTwoldCF) -->
+        <div class="gooey-navbar-wrap" data-active-target="about" aria-label="Portfolio Navigation">
+          <div class="gooey-navbar">
+            <svg class="gooey-svg" aria-hidden="true" focusable="false">
+              <defs>
+                <radialGradient id="goo-glow-about-step" gradientUnits="userSpaceOnUse" cx="-9999" cy="-9999" r="95">
+                  <stop offset="0" stop-color="#EFF4C8" stop-opacity="1" />
+                  <stop offset="0.45" stop-color="#EFF4C8" stop-opacity="0.55" />
+                  <stop offset="1" stop-color="#EFF4C8" stop-opacity="0" />
+                </radialGradient>
+              </defs>
+              <path class="gooey-base-path" fill="#FFFFFF" fill-rule="nonzero" />
+              <path class="gooey-glow-path" fill="url(#goo-glow-about-step)" fill-rule="nonzero" />
+            </svg>
+            <nav class="gooey-nav" aria-label="Section Navigation">
+              <button type="button" class="gooey-item" data-nav-target="home" aria-label="Go to Home">
+                <span class="gooey-label">HOME</span>
+                <span class="gooey-dot" aria-hidden="true"></span>
               </button>
-              <button type="button" class="intro-menu-btn" data-nav-target="projects">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-                <span class="btn-num">02</span>
-                <span>Work <sup>06</sup></span>
+              <button type="button" class="gooey-item" data-nav-target="about" aria-label="Open About Me">
+                <span class="gooey-label">ABOUT</span>
+                <span class="gooey-dot" aria-hidden="true"></span>
               </button>
-              <button type="button" class="intro-menu-btn" data-nav-target="certs">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
-                <span class="btn-num">03</span>
-                <span>Certs <sup>16</sup></span>
+              <button type="button" class="gooey-item" data-nav-target="projects" aria-label="Open Work Archive">
+                <span class="gooey-label">WORK</span>
+                <span class="gooey-dot" aria-hidden="true"></span>
               </button>
-              <button type="button" class="intro-menu-btn btn-contact" data-nav-target="contact">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                <span class="btn-num">04</span>
-                <span>Contact &rarr;</span>
+              <button type="button" class="gooey-item" data-nav-target="certs" aria-label="Open Credentials">
+                <span class="gooey-label">CERTS</span>
+                <span class="gooey-dot" aria-hidden="true"></span>
               </button>
-            </div>
+              <button type="button" class="gooey-item" data-nav-target="contact" aria-label="Connect and Contact">
+                <span class="gooey-label">CONTACT</span>
+                <span class="gooey-dot" aria-hidden="true"></span>
+              </button>
+            </nav>
           </div>
+        </div></div>
         </div>
 
         <!-- Lower Boundary Line (Lowered down with ample breathing space) -->
@@ -3195,55 +3915,43 @@ dialog.case-overlay::backdrop {
     </div>
   </div>
 
-  <!-- SECTION MENU OPTIONS (MENU IN EVERY SECTION) -->
-  <div class="section-menu-options" aria-label="Portfolio Menu Options">
-    <button type="button" class="hero-menu-card" data-nav-target="home" aria-label="Go to Home">
-      <div class="hm-card-top">
-        <span class="hm-num">00</span>
-        <span class="hm-pill">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-          <span>HOME</span>
-        </span>
-        <span class="hm-arrow">←</span>
-      </div>
-      <div class="hm-title">HOME</div>
-    </button>
-
-    <button type="button" class="hero-menu-card" data-nav-target="projects" aria-label="Open Projects">
-      <div class="hm-card-top">
-        <span class="hm-num">02</span>
-        <span class="hm-pill">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-          <span>ARCHIVE</span>
-        </span>
-        <span class="hm-arrow">↗</span>
-      </div>
-      <div class="hm-title">WORK<span class="hm-sub"> // 06</span></div>
-    </button>
-
-    <button type="button" class="hero-menu-card" data-nav-target="certs" aria-label="Open Certificates">
-      <div class="hm-card-top">
-        <span class="hm-num">03</span>
-        <span class="hm-pill">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"></circle><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"></path></svg>
-          <span>CREDENTIALS</span>
-        </span>
-        <span class="hm-arrow">↗</span>
-      </div>
-      <div class="hm-title">CERTS<span class="hm-sub"> // 16</span></div>
-    </button>
-
-    <button type="button" class="hero-menu-card" data-nav-target="contact" aria-label="Open Contact">
-      <div class="hm-card-top">
-        <span class="hm-num">04</span>
-        <span class="hm-pill">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-          <span>CONNECT</span>
-        </span>
-        <span class="hm-arrow">↓</span>
-      </div>
-      <div class="hm-title">CONTACT</div>
-    </button>
+  <!-- GOOEY NAVBAR COMPONENT (RED ABOUT ME VIEW) -->
+  <div class="gooey-navbar-wrap about-red-gooey-wrap" data-active-target="about" aria-label="Portfolio Navigation">
+    <div class="gooey-navbar">
+      <svg class="gooey-svg" aria-hidden="true" focusable="false">
+        <defs>
+          <radialGradient id="goo-glow-about-red" gradientUnits="userSpaceOnUse" cx="-9999" cy="-9999" r="95">
+            <stop offset="0" stop-color="#EFF4C8" stop-opacity="1" />
+            <stop offset="0.45" stop-color="#EFF4C8" stop-opacity="0.55" />
+            <stop offset="1" stop-color="#EFF4C8" stop-opacity="0" />
+          </radialGradient>
+        </defs>
+        <path class="gooey-base-path" fill="#FFFFFF" fill-rule="nonzero" />
+        <path class="gooey-glow-path" fill="url(#goo-glow-about-red)" fill-rule="nonzero" />
+      </svg>
+      <nav class="gooey-nav" aria-label="Section Navigation">
+        <button type="button" class="gooey-item" data-nav-target="home" aria-label="Go to Home">
+          <span class="gooey-label">HOME</span>
+          <span class="gooey-dot" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="gooey-item" data-nav-target="about" aria-label="Open About Me">
+          <span class="gooey-label">ABOUT</span>
+          <span class="gooey-dot" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="gooey-item" data-nav-target="projects" aria-label="Open Work Archive">
+          <span class="gooey-label">WORK</span>
+          <span class="gooey-dot" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="gooey-item" data-nav-target="certs" aria-label="Open Credentials">
+          <span class="gooey-label">CERTS</span>
+          <span class="gooey-dot" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="gooey-item" data-nav-target="contact" aria-label="Connect and Contact">
+          <span class="gooey-label">CONTACT</span>
+          <span class="gooey-dot" aria-hidden="true"></span>
+        </button>
+      </nav>
+    </div>
   </div>
 </section>
 
@@ -3423,56 +4131,44 @@ dialog.case-overlay::backdrop {
   </div>
 
   <!-- SECTION MENU OPTIONS (MENU IN EVERY SECTION) -->
-  <div class="section-menu-options" aria-label="Portfolio Menu Options">
-    <button type="button" class="hero-menu-card" data-nav-target="home" aria-label="Go to Home">
-      <div class="hm-card-top">
-        <span class="hm-num">00</span>
-        <span class="hm-pill">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-          <span>HOME</span>
-        </span>
-        <span class="hm-arrow">←</span>
-      </div>
-      <div class="hm-title">HOME</div>
-    </button>
-
-    <button type="button" class="hero-menu-card" data-nav-target="about" aria-label="Open About Me">
-      <div class="hm-card-top">
-        <span class="hm-num">01</span>
-        <span class="hm-pill">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-          <span>PROFILE</span>
-        </span>
-        <span class="hm-arrow">↗</span>
-      </div>
-      <div class="hm-title">ABOUT ME</div>
-    </button>
-
-    <button type="button" class="hero-menu-card" data-nav-target="certs" aria-label="Open Certificates">
-      <div class="hm-card-top">
-        <span class="hm-num">03</span>
-        <span class="hm-pill">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"></circle><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"></path></svg>
-          <span>CREDENTIALS</span>
-        </span>
-        <span class="hm-arrow">↗</span>
-      </div>
-      <div class="hm-title">CERTS<span class="hm-sub"> // 16</span></div>
-    </button>
-
-    <button type="button" class="hero-menu-card" data-nav-target="contact" aria-label="Open Contact">
-      <div class="hm-card-top">
-        <span class="hm-num">04</span>
-        <span class="hm-pill">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-          <span>CONNECT</span>
-        </span>
-        <span class="hm-arrow">↓</span>
-      </div>
-      <div class="hm-title">CONTACT</div>
-    </button>
-  </div>
-  </div>
+  <!-- FRAMER GOOEY NAVBAR COMPONENT (Ported from: https://framer.com/m/GooeyNavbar-TLFB27.js@bCvGv6MKodKnLTwoldCF) -->
+        <div class="gooey-navbar-wrap" data-active-target="projects" aria-label="Portfolio Navigation">
+          <div class="gooey-navbar">
+            <svg class="gooey-svg" aria-hidden="true" focusable="false">
+              <defs>
+                <radialGradient id="goo-glow-projects" gradientUnits="userSpaceOnUse" cx="-9999" cy="-9999" r="95">
+                  <stop offset="0" stop-color="#EFF4C8" stop-opacity="1" />
+                  <stop offset="0.45" stop-color="#EFF4C8" stop-opacity="0.55" />
+                  <stop offset="1" stop-color="#EFF4C8" stop-opacity="0" />
+                </radialGradient>
+              </defs>
+              <path class="gooey-base-path" fill="#FFFFFF" fill-rule="nonzero" />
+              <path class="gooey-glow-path" fill="url(#goo-glow-projects)" fill-rule="nonzero" />
+            </svg>
+            <nav class="gooey-nav" aria-label="Section Navigation">
+              <button type="button" class="gooey-item" data-nav-target="home" aria-label="Go to Home">
+                <span class="gooey-label">HOME</span>
+                <span class="gooey-dot" aria-hidden="true"></span>
+              </button>
+              <button type="button" class="gooey-item" data-nav-target="about" aria-label="Open About Me">
+                <span class="gooey-label">ABOUT</span>
+                <span class="gooey-dot" aria-hidden="true"></span>
+              </button>
+              <button type="button" class="gooey-item" data-nav-target="projects" aria-label="Open Work Archive">
+                <span class="gooey-label">WORK</span>
+                <span class="gooey-dot" aria-hidden="true"></span>
+              </button>
+              <button type="button" class="gooey-item" data-nav-target="certs" aria-label="Open Credentials">
+                <span class="gooey-label">CERTS</span>
+                <span class="gooey-dot" aria-hidden="true"></span>
+              </button>
+              <button type="button" class="gooey-item" data-nav-target="contact" aria-label="Connect and Contact">
+                <span class="gooey-label">CONTACT</span>
+                <span class="gooey-dot" aria-hidden="true"></span>
+              </button>
+            </nav>
+          </div>
+        </div></div>
 </section>
 
 <!-- Case study dialog -->
@@ -3529,74 +4225,73 @@ dialog.case-overlay::backdrop {
   </div>
   <div class="section-header">
     <h2>Certifications &amp; Achievements</h2>
-  </div>
-
-  <!-- CURVE FLOW CAROUSEL (FRAMER COMPONENT) -->
-  <div class="curve-flow-container" id="curveFlowContainer">
-    <div class="curve-flow-viewport" id="curveFlowViewport">
-      <div class="curve-flow-track" id="curveFlowTrack"></div>
+    <div class="certs-brands-row" id="certsBrandsRow" aria-label="Certified Technologies">
+      <span class="cert-brand-item" data-brand="openai" tabindex="0" role="button">OpenAI</span>
+      <span class="cert-brand-item" data-brand="huggingface" tabindex="0" role="button">HuggingFace</span>
+      <span class="cert-brand-item" data-brand="paloalto" tabindex="0" role="button">Palo Alto</span>
+      <span class="cert-brand-item" data-brand="redhat" tabindex="0" role="button">Red Hat</span>
+      <span class="cert-brand-item" data-brand="aws" tabindex="0" role="button">AWS</span>
+      <span class="cert-brand-item" data-brand="mern" tabindex="0" role="button">MERN</span>
+      <span class="cert-brand-item" data-brand="cisco" tabindex="0" role="button">cisco</span>
     </div>
   </div>
 
-  <div class="wheel-controls">
-    <button type="button" class="wheel-btn" id="curveFlowPrev" aria-label="Previous certificate">←</button>
-    <span class="wheel-status">16 CERTIFICATES · DRAG OR SWIPE · CLICK TO VIEW</span>
-    <button type="button" class="wheel-btn" id="curveFlowNext" aria-label="Next certificate">→</button>
+            <!-- FRAMER DRAGGABLE 3D CAROUSEL (https://framer.com/m/DragableCarousel-ADAPEh.js@fXOJxTG2NAtXIGjIOPmn) -->
+  <div class="dragable-carousel-container" id="dragableCarousel">
+    <div class="dragable-carousel-track" id="dragableTrack"></div>
   </div>
+
+  <div class="wheel-controls">
+    <button type="button" class="wheel-btn" id="wheelLeft" aria-label="Previous certificate">←</button>
+    <button type="button" class="wheel-btn" id="wheelRight" aria-label="Next certificate">→</button>
+  </div>
+
+  <div class="dragable-dots-row" id="dragableDotsRow" aria-label="Carousel pagination"></div>
 
   <!-- SECTION MENU OPTIONS (MENU IN EVERY SECTION) -->
-  <div class="section-menu-options" aria-label="Portfolio Menu Options">
-    <button type="button" class="hero-menu-card" data-nav-target="home" aria-label="Go to Home">
-      <div class="hm-card-top">
-        <span class="hm-num">00</span>
-        <span class="hm-pill">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-          <span>HOME</span>
-        </span>
-        <span class="hm-arrow">←</span>
-      </div>
-      <div class="hm-title">HOME</div>
-    </button>
-
-    <button type="button" class="hero-menu-card" data-nav-target="about" aria-label="Open About Me">
-      <div class="hm-card-top">
-        <span class="hm-num">01</span>
-        <span class="hm-pill">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-          <span>PROFILE</span>
-        </span>
-        <span class="hm-arrow">↗</span>
-      </div>
-      <div class="hm-title">ABOUT ME</div>
-    </button>
-
-    <button type="button" class="hero-menu-card" data-nav-target="projects" aria-label="Open Projects">
-      <div class="hm-card-top">
-        <span class="hm-num">02</span>
-        <span class="hm-pill">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-          <span>ARCHIVE</span>
-        </span>
-        <span class="hm-arrow">↗</span>
-      </div>
-      <div class="hm-title">WORK<span class="hm-sub"> // 06</span></div>
-    </button>
-
-    <button type="button" class="hero-menu-card" data-nav-target="contact" aria-label="Open Contact">
-      <div class="hm-card-top">
-        <span class="hm-num">04</span>
-        <span class="hm-pill">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-          <span>CONNECT</span>
-        </span>
-        <span class="hm-arrow">↓</span>
-      </div>
-      <div class="hm-title">CONTACT</div>
-    </button>
-  </div>
-</section>
+  <!-- FRAMER GOOEY NAVBAR COMPONENT (Ported from: https://framer.com/m/GooeyNavbar-TLFB27.js@bCvGv6MKodKnLTwoldCF) -->
+        <div class="gooey-navbar-wrap" data-active-target="certs" aria-label="Portfolio Navigation">
+          <div class="gooey-navbar">
+            <svg class="gooey-svg" aria-hidden="true" focusable="false">
+              <defs>
+                <radialGradient id="goo-glow-certs" gradientUnits="userSpaceOnUse" cx="-9999" cy="-9999" r="95">
+                  <stop offset="0" stop-color="#EFF4C8" stop-opacity="1" />
+                  <stop offset="0.45" stop-color="#EFF4C8" stop-opacity="0.55" />
+                  <stop offset="1" stop-color="#EFF4C8" stop-opacity="0" />
+                </radialGradient>
+              </defs>
+              <path class="gooey-base-path" fill="#FFFFFF" fill-rule="nonzero" />
+              <path class="gooey-glow-path" fill="url(#goo-glow-certs)" fill-rule="nonzero" />
+            </svg>
+            <nav class="gooey-nav" aria-label="Section Navigation">
+              <button type="button" class="gooey-item" data-nav-target="home" aria-label="Go to Home">
+                <span class="gooey-label">HOME</span>
+                <span class="gooey-dot" aria-hidden="true"></span>
+              </button>
+              <button type="button" class="gooey-item" data-nav-target="about" aria-label="Open About Me">
+                <span class="gooey-label">ABOUT</span>
+                <span class="gooey-dot" aria-hidden="true"></span>
+              </button>
+              <button type="button" class="gooey-item" data-nav-target="projects" aria-label="Open Work Archive">
+                <span class="gooey-label">WORK</span>
+                <span class="gooey-dot" aria-hidden="true"></span>
+              </button>
+              <button type="button" class="gooey-item" data-nav-target="certs" aria-label="Open Credentials">
+                <span class="gooey-label">CERTS</span>
+                <span class="gooey-dot" aria-hidden="true"></span>
+              </button>
+              <button type="button" class="gooey-item" data-nav-target="contact" aria-label="Connect and Contact">
+                <span class="gooey-label">CONTACT</span>
+                <span class="gooey-dot" aria-hidden="true"></span>
+              </button>
+            </nav>
+          </div>
+        </div></section>
 
 </main>
+
+
+
 
 <!-- Certificate Full Lightbox -->
 <div class="cert-lightbox" id="certLightbox" aria-label="Certificate viewer">
@@ -3619,10 +4314,7 @@ dialog.case-overlay::backdrop {
   </div>
 </footer>
 
-<!-- Bottom Credits Bar -->
-<div class="bottom-credits-bar" id="bottomCreditsBar">
-  <span>made by aleena</span>
-</div>
+
 
 <script>
 /* ====================================================================
@@ -3900,7 +4592,7 @@ const projectData = {
     ],
     paragraph: "Developed Vera for another hackathon, an agentic AI-powered financial servicing system that handles banking requests such as fee waivers, credit limit adjustments, and card replacements. Built the AI orchestration pipeline using LangGraph, integrating LLM-based intent understanding, tool calling, RAG-based policy retrieval, and deterministic validation through a Python policy engine. Implemented Redis for session state, PostgreSQL for persistent data, and Kafka for audit event streaming, with a FastAPI backend. The platform also supports real-time multilingual voice interactions using Sarvam AI's speech-to-text and text-to-speech services.",
     skills: ['LangGraph', 'FastAPI', 'Python', 'Sarvam AI', 'RAG', 'Redis', 'PostgreSQL', 'Kafka', 'Agentic AI', 'Speech-to-Text'],
-    github: 'https://github.com/foevertigo/CodeStreet-american-express'
+    github: 'https://github.com/aleenafvg/CodeStreet-american-express'
   },
   oki3: {
     number: 'PROJECT 02',
@@ -3916,7 +4608,7 @@ const projectData = {
     ],
     paragraph: "Built a very simple project called OKI3, a lightweight AI-powered story generator, to explore how LLMs and their APIs work. Users can customize stories by selecting a genre, tone, and opening prompt, while the Gemini Interactions API generates and continues narratives while maintaining context. Built using HTML, CSS, and JavaScript, this project served as my introduction to LLM integration and API-driven application development.",
     skills: ['Gemini Interactions API', 'JavaScript', 'HTML5', 'CSS3', 'Generative AI', 'Prompt Engineering', 'REST APIs'],
-    github: 'https://github.com/foevertigo/OKI3'
+    github: 'https://github.com/aleenafvg/OKI3'
   },
   adlab: {
     number: 'PROJECT 03',
@@ -3937,7 +4629,7 @@ const projectData = {
     ],
     paragraph: "Made this little project for my ethical hacking class. It's an Active Directory Attack simulation Lab, using Windows Server 2022 and Kali Linux in an isolated virtual network. The project involved configuring a vulnerable Domain Controller, performing network reconnaissance, exploiting misconfigurations through AS-REP Roasting and Kerberoasting, cracking Kerberos hashes offline, and executing DCSync and Pass-the-Hash attacks using Impacket to demonstrate a complete Active Directory domain compromise. Got some real experience with Nmap, John the Ripper, virtual networking, Kerberos troubleshooting, and Windows domain administration.",
     skills: ['Windows Server 2022', 'Active Directory', 'Kali Linux', 'Nmap', 'John the Ripper', 'Impacket', 'Kerberos', 'AS-REP Roasting', 'DCSync', 'Pass-the-Hash', 'Virtual Networking'],
-    github: 'https://github.com/foevertigo/ADAttackLab'
+    github: 'https://github.com/aleenafvg/ADAttackLab'
   },
   nidar: {
     number: 'PROJECT 04',
@@ -4000,7 +4692,7 @@ const projectData = {
     ],
     paragraph: "Built SB Works, my first full-stack web development project, using the MERN stack (MongoDB, Express.js, React.js, and Node.js). The platform connects clients and freelancers, featuring user authentication, role-based dashboards, project management, and real-time chat using Socket.IO. This project gave me my first hands-on experience building a complete web application, integrating frontend and backend systems, designing REST APIs, and managing database operations.",
     skills: ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'Socket.IO', 'REST APIs', 'Full-Stack MERN'],
-    github: 'https://github.com/foevertigo/SB_WORKS'
+    github: 'https://github.com/aleenafvg/SB_WORKS'
   }
 };
 
@@ -4421,313 +5113,503 @@ if (urlParams.get('open') === 'true' || urlParams.get('open') === '1') {
 }
 
 // ====================================================================
-// CURVE FLOW CAROUSEL ENGINE (FRAMER CURVE FLOW COMPONENT)
-// Infinite horizontal ribbon with 3D curvature, edge scaling & depth,
-// continuous flow drift, mouse drag & touch swipe with momentum, and lightbox view.
+// DRAGGABLE 3D CAROUSEL — PHYSICS SNAP EDITION
+// Ported from: https://framer.com/m/DragableCarousel-ADAPEh.js@fXOJxTG2NAtXIGjIOPmn
+// Powered by AliThemes.com & Framer Coverflow physics engine
 // ====================================================================
 
-const certImages = [
-  "certificates/Screenshot 2026-03-08 210156.png",
-  "certificates/Screenshot 2026-03-08 210228.png",
-  "certificates/Screenshot 2026-03-08 210306.png",
-  "certificates/Screenshot 2026-03-08 210320.png",
-  "certificates/Screenshot 2026-03-09 234806.png",
-  "certificates/Screenshot 2026-03-11 223459.png",
-  "certificates/Screenshot 2026-03-14 110659.png",
-  "certificates/Screenshot 2026-04-19 220552.png",
-  "certificates/Screenshot 2026-04-19 220613.png",
-  "certificates/Screenshot 2026-04-19 220644.png",
-  "certificates/Screenshot 2026-09-11 232758.png",
-  "certificates/Screenshot 2026-09-11 234055.png",
-  "certificates/Screenshot 2026-10-08 151415.png",
-  "certificates/Screenshot 2026-10-08 151426.png",
-  "certificates/Screenshot 2026-10-08 151437.png",
-  "certificates/Screenshot 2026-10-08 152545.png"
+const certSlides = [
+  { src: "certificates/OpenAI.png", brand: "openai", brandName: "OpenAI", title: "OpenAI Prompt Engineering", color: "#10A37F" },
+  { src: "certificates/HuggingFace.png", brand: "huggingface", brandName: "HuggingFace", title: "Hugging Face Deep Learning", color: "#FFD21E" },
+  { src: "certificates/PaloAlto.png", brand: "paloalto", brandName: "Palo Alto", title: "Palo Alto Cybersecurity Fundamentals", color: "#FA582D" },
+  { src: "certificates/PaloAlto1.png", brand: "paloalto", brandName: "Palo Alto", title: "Palo Alto Network Security", color: "#FA582D" },
+  { src: "certificates/PaloAlto2.png", brand: "paloalto", brandName: "Palo Alto", title: "Palo Alto Cloud Security", color: "#FA582D" },
+  { src: "certificates/PaloAlto3.png", brand: "paloalto", brandName: "Palo Alto", title: "Palo Alto Security Operations", color: "#FA582D" },
+  { src: "certificates/PaloAlto4.png", brand: "paloalto", brandName: "Palo Alto", title: "Palo Alto Gateway Architecture", color: "#FA582D" },
+  { src: "certificates/PaloAlto5.png", brand: "paloalto", brandName: "Palo Alto", title: "Palo Alto Cyber Defense", color: "#FA582D" },
+  { src: "certificates/RedHat1.png", brand: "redhat", brandName: "Red Hat", title: "Red Hat System Administration", color: "#EE0000" },
+  { src: "certificates/RedHat2.png", brand: "redhat", brandName: "Red Hat", title: "Red Hat Enterprise Linux", color: "#EE0000" },
+  { src: "certificates/RedHat3.png", brand: "redhat", brandName: "Red Hat", title: "Red Hat OpenShift & Containers", color: "#EE0000" },
+  { src: "certificates/AWS.png", brand: "aws", brandName: "AWS", title: "AWS Cloud Practitioner", color: "#FF9900" },
+  { src: "certificates/AWS1.png", brand: "aws", brandName: "AWS", title: "AWS Solutions Architecture", color: "#FF9900" },
+  { src: "certificates/MERN.png", brand: "mern", brandName: "MERN", title: "MERN Full Stack Specialization", color: "#00ED64" },
+  { src: "certificates/Cisco.png", brand: "cisco", brandName: "cisco", title: "Cisco Certified Network Associate", color: "#049FD9" },
+  { src: "certificates/Screenshot 2026-10-08 151437.png", brand: "cisco", brandName: "cisco", title: "Cyber Defense & Networking Challenge", color: "#049FD9" }
 ];
 
-let curveFlowTrackEl = null;
-let curveFlowViewportEl = null;
-let curveCards = [];
-let curveScrollOffset = 0;
-let curveVelocity = 0;
-let curveIsDragging = false;
-let curveDragStartX = 0;
-let curveDragLastX = 0;
-let curveDragDist = 0;
-let curveIsHovered = false;
-let curveRafId = 0;
-let curveInitialized = false;
+const depthSlides = certSlides;
 
-function getCurveSpacing() {
-  const w = window.innerWidth;
-  if (w <= 640) return 240;
-  if (w <= 900) return 280;
-  return 345;
+function resolveCertPath(relPath) {
+  if (!relPath) return '';
+  if (relPath.startsWith('http://') || relPath.startsWith('https://') || relPath.startsWith('/')) {
+    return relPath;
+  }
+  const isTechstack = window.location.pathname.includes('/techstack/');
+  if (isTechstack && !relPath.startsWith('../')) {
+    return '../' + relPath;
+  }
+  return relPath;
 }
 
-function buildCurveFlowDOM() {
-  curveFlowTrackEl = document.getElementById('curveFlowTrack');
-  curveFlowViewportEl = document.getElementById('curveFlowViewport');
-  if (!curveFlowTrackEl || !curveFlowViewportEl) return;
+const carouselContainer = document.getElementById('dragableCarousel');
+const carouselTrack = document.getElementById('dragableTrack');
+const dotsRowEl = document.getElementById('dragableDotsRow');
+const wheelStatusEl = document.getElementById('wheelStatus');
+const wheelLeft = document.getElementById('wheelLeft');
+const wheelRight = document.getElementById('wheelRight');
+const certLightbox = document.getElementById('certLightbox');
+const certLightboxClose = document.getElementById('certLightboxClose');
+const certLightboxImg = document.getElementById('certLightboxImg');
+const certBrandsRow = document.getElementById('certsBrandsRow');
 
-  curveFlowTrackEl.innerHTML = '';
-  curveCards = [];
+// Preset / Config parameters for 3D Certificates Coverflow
+const carouselConfig = {
+  perspective: 1000,
+  rotateY: 38,             // 3D coverflow rotation angle
+  depth: 140,              // Z-depth recession
+  activeScale: 1.0,        // Active center scale
+  inactiveScale: 0.84,     // Side scale
+  inactiveOpacity: 0.45,   // Side opacity
+  snapDuration: 800,       // Duration in ms: smooth, elegant glide
+  loop: false
+};
 
-  certImages.forEach((imgSrc, i) => {
-    const card = document.createElement('div');
-    card.className = 'curve-flow-card';
-    card.setAttribute('role', 'button');
-    card.setAttribute('tabindex', '0');
-    card.setAttribute('aria-label', `View Certificate ${i + 1}`);
+let activeSlideIndex = 0;
+let trackX = 0;
+let slideElements = [];
+let dotElements = [];
+let isSnapping = false;
+let snapRafId = null;
 
-    const img = document.createElement('img');
-    img.src = imgSrc;
-    img.alt = `Certificate ${i + 1}`;
-    img.draggable = false;
-    card.appendChild(img);
 
-    card.addEventListener('click', () => {
-      if (Math.abs(curveDragDist) < 8) {
-        openCertLightbox(imgSrc);
-      }
-    });
 
-    card.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        openCertLightbox(imgSrc);
-      }
-    });
+function getSlideMetrics() {
+  const firstSlide = slideElements[0];
+  let slideW = 0;
+  if (firstSlide) {
+    const cw = parseFloat(window.getComputedStyle(firstSlide).width);
+    if (!isNaN(cw) && cw > 10) {
+      slideW = cw;
+    } else if (firstSlide.offsetWidth > 10) {
+      slideW = firstSlide.offsetWidth;
+    }
+  }
+  if (!slideW) {
+    const winW = window.innerWidth || document.documentElement.clientWidth || 1200;
+    if (winW <= 480) {
+      slideW = Math.max(210, Math.min(winW * 0.76, 280));
+    } else if (winW <= 768) {
+      slideW = Math.max(250, Math.min(winW * 0.65, 340));
+    } else {
+      slideW = Math.max(290, Math.min(winW * 0.28, 450));
+    }
+  }
+  let gap = 22;
+  if (carouselTrack) {
+    const cg = parseFloat(window.getComputedStyle(carouselTrack).gap);
+    if (!isNaN(cg) && cg > 0) gap = cg;
+    else if (window.innerWidth <= 480) gap = 12;
+    else if (window.innerWidth <= 768) gap = 16;
+  }
+  return { slideW, gap, step: slideW + gap };
+}
 
-    curveFlowTrackEl.appendChild(card);
-    curveCards.push({ el: card, src: imgSrc, index: i });
+function centerXFor(i) {
+  if (!carouselContainer) return 0;
+  const containerW = (carouselContainer.offsetWidth > 10)
+    ? carouselContainer.offsetWidth
+    : (document.documentElement.clientWidth || window.innerWidth);
+  const { slideW, step } = getSlideMetrics();
+  return containerW / 2 - i * step - slideW / 2;
+}
+
+// Per-slide 3D coverflow transforms (Framer component core logic)
+function renderCarousel() {
+  if (!carouselContainer || !carouselTrack) return;
+  carouselTrack.style.transform = `translateX(${trackX.toFixed(2)}px)`;
+
+  const containerW = (carouselContainer.offsetWidth > 10)
+    ? carouselContainer.offsetWidth
+    : (document.documentElement.clientWidth || window.innerWidth);
+  const center = containerW / 2;
+  const { slideW, step } = getSlideMetrics();
+
+  slideElements.forEach((slide, i) => {
+    if (!slide) return;
+    const slideCenter = i * step + slideW / 2 + trackX;
+    const norm = (slideCenter - center) / step;
+    const abs = Math.abs(norm);
+
+    const ry = Math.max(-65, Math.min(65, norm * carouselConfig.rotateY));
+    const tz = -abs * carouselConfig.depth;
+    const sc = Math.max(carouselConfig.inactiveScale, carouselConfig.activeScale - abs * (carouselConfig.activeScale - carouselConfig.inactiveScale));
+    const op = Math.max(carouselConfig.inactiveOpacity, 1 - abs * (1 - carouselConfig.inactiveOpacity));
+
+    slide.style.transform = `perspective(${carouselConfig.perspective}px) rotateY(${ry.toFixed(2)}deg) translateZ(${tz.toFixed(1)}px) scale(${sc.toFixed(3)})`;
+    slide.style.opacity = op.toFixed(3);
+    slide.style.zIndex = String(100 - Math.min(90, Math.round(abs * 10)));
+  });
+}
+
+// Snapping animation with smooth and slow easeOutCubic curve (850ms)
+function snapTo(index, instant = false) {
+  const count = certSlides.length;
+  const target = Math.max(0, Math.min(count - 1, index));
+  if (target === activeSlideIndex && !instant) return;
+  const targetX = centerXFor(target);
+
+  activeSlideIndex = target;
+  window.activeSlideIndex = target;
+  updateStatusAndDots();
+
+  if (instant) {
+    if (snapRafId) {
+      cancelAnimationFrame(snapRafId);
+      snapRafId = null;
+    }
+    trackX = targetX;
+    renderCarousel();
+    isSnapping = false;
+    return;
+  }
+
+  if (snapRafId) cancelAnimationFrame(snapRafId);
+  const startX = trackX;
+  const deltaX = targetX - startX;
+  const startTime = performance.now();
+  const duration = carouselConfig.snapDuration;
+
+  isSnapping = true;
+
+  function stepSnap(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(1, elapsed / duration);
+    // Smooth easeOutCubic: responds immediately on hover, glides smoothly, soft settle
+    const ease = 1 - Math.pow(1 - progress, 3);
+    trackX = startX + deltaX * ease;
+    renderCarousel();
+
+    if (progress < 1) {
+      snapRafId = requestAnimationFrame(stepSnap);
+    } else {
+      trackX = targetX;
+      renderCarousel();
+      isSnapping = false;
+      snapRafId = null;
+    }
+  }
+  snapRafId = requestAnimationFrame(stepSnap);
+}
+
+function updateStatusAndDots() {
+  const slide = certSlides[activeSlideIndex];
+  if (!slide) return;
+
+  if (wheelStatusEl) {
+    wheelStatusEl.textContent = `${activeSlideIndex + 1} / ${certSlides.length} · ${slide.title.toUpperCase()}`;
+  }
+
+  // Update dots
+  dotElements.forEach((dot, i) => {
+    dot.classList.toggle('active', i === activeSlideIndex);
   });
 
-  setupCurveFlowEvents();
-  if (!curveRafId) {
-    curveRafId = requestAnimationFrame(loopCurveFlow);
-  }
+  // Highlight brand in brand filter row
+  highlightBrand(slide.brand);
 }
 
-function updateCurveFlowPositions() {
-  if (!curveFlowViewportEl || !curveCards.length) return;
-  const viewportW = curveFlowViewportEl.offsetWidth || window.innerWidth;
-  const halfW = viewportW * 0.52;
-  const spacing = getCurveSpacing();
-  const trackLen = certImages.length * spacing;
+function highlightBrand(brand) {
+  if (!certBrandsRow) return;
+  const items = certBrandsRow.querySelectorAll('.cert-brand-item');
+  items.forEach(item => {
+    if (item.dataset.brand === brand) {
+      item.classList.add('brand-active');
+    } else {
+      item.classList.remove('brand-active');
+    }
+  });
+}
 
-  curveCards.forEach((c) => {
-    let rawX = c.index * spacing - curveScrollOffset;
-    // Infinite modulo wrap around center [-trackLen/2, trackLen/2]
-    rawX = ((rawX % trackLen) + trackLen * 1.5) % trackLen - (trackLen * 0.5);
+// Lightbox Open & Close
+function openCertificateLightbox(slide) {
+  if (!certLightbox || !certLightboxImg) return;
+  certLightboxImg.src = resolveCertPath(slide.src);
+  certLightboxImg.alt = slide.title || 'Certificate Full View';
+  certLightbox.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
 
-    const u = rawX / halfW;
-    const absU = Math.abs(u);
+function closeCertificateLightbox() {
+  if (!certLightbox) return;
+  certLightbox.classList.remove('open');
+  document.body.style.overflow = '';
+}
 
-    if (absU > 1.65) {
-      c.el.style.visibility = 'hidden';
+if (certLightboxClose) {
+  certLightboxClose.addEventListener('click', closeCertificateLightbox);
+}
+if (certLightbox) {
+  certLightbox.addEventListener('click', (e) => {
+    if (e.target === certLightbox) closeCertificateLightbox();
+  });
+}
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && certLightbox && certLightbox.classList.contains('open')) {
+    closeCertificateLightbox();
+  }
+});
+
+// Build Slides DOM
+function buildDragableCarousel() {
+  if (!carouselTrack) return;
+  carouselTrack.innerHTML = '';
+  slideElements = [];
+
+  certSlides.forEach((slide, i) => {
+    const el = document.createElement('div');
+    el.className = 'dragable-slide';
+    el.setAttribute('role', 'button');
+    el.setAttribute('tabindex', '0');
+    el.setAttribute('aria-label', `View ${slide.title}`);
+    el.dataset.index = i;
+    el.dataset.brand = slide.brand;
+
+    const img = document.createElement('img');
+    img.src = resolveCertPath(slide.src);
+    img.alt = slide.title;
+    img.loading = 'lazy';
+    img.draggable = false;
+    el.appendChild(img);
+
+    // Click: active opens lightbox; inactive snaps to center
+    el.addEventListener('click', () => {
+      if (i === activeSlideIndex) {
+        openCertificateLightbox(slide);
+      } else {
+        snapTo(i);
+      }
+    });
+
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openCertificateLightbox(slide);
+      }
+    });
+
+    carouselTrack.appendChild(el);
+    slideElements.push(el);
+  });
+
+  // Build Dots Row
+  if (dotsRowEl) {
+    dotsRowEl.innerHTML = '';
+    dotElements = [];
+    certSlides.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.className = 'dragable-dot' + (i === 0 ? ' active' : '');
+      dot.setAttribute('type', 'button');
+      dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+      dot.addEventListener('click', () => snapTo(i));
+      dotsRowEl.appendChild(dot);
+      dotElements.push(dot);
+    });
+  }
+
+  snapTo(0, true);
+}
+
+// ====================================================================
+// CURSOR-LANDING HOVER CONTROLLER
+// "The certificate I land my cursor upon should come to the centre"
+// - Fires smoothly whenever user moves & lands cursor upon any certificate.
+// - Filters out micro-movement & browser synthetic events during animation.
+// - 100ms dwell prevents accidental brushes when sweeping across cards.
+// ====================================================================
+let hoverDwellTimer = null;
+let candidateSlideIndex = -1;
+let lastUserMouseX = -9999;
+let lastUserMouseY = -9999;
+
+function clearCertHover() {
+  if (hoverDwellTimer) {
+    clearTimeout(hoverDwellTimer);
+    hoverDwellTimer = null;
+  }
+  candidateSlideIndex = -1;
+}
+
+if (carouselContainer) {
+  carouselContainer.addEventListener('pointermove', (e) => {
+    // Only handle mouse pointer (or touch if supported)
+    const dx = Math.abs(e.clientX - lastUserMouseX);
+    const dy = Math.abs(e.clientY - lastUserMouseY);
+
+    // Require real mouse motion (>= 4px) to register cursor landing;
+    // this eliminates browser synthetic events while the carousel is sliding!
+    if (dx < 4 && dy < 4) return;
+    lastUserMouseX = e.clientX;
+    lastUserMouseY = e.clientY;
+
+    // While snapping, do not let cards sweeping underneath interrupt unless intentional larger move (> 50px)
+    if (isSnapping && dx < 50 && dy < 50) return;
+
+    // Detect which certificate the cursor is landing upon
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const slide = el ? el.closest('.dragable-slide') : null;
+    let targetIdx = -1;
+
+    if (slide) {
+      targetIdx = parseInt(slide.dataset.index, 10);
+    } else {
+      // Geometric fallback based on card layout in carousel container
+      const containerRect = carouselContainer.getBoundingClientRect();
+      if (e.clientY >= containerRect.top && e.clientY <= containerRect.bottom) {
+        const { slideW, step } = getSlideMetrics();
+        const mouseXInContainer = e.clientX - containerRect.left;
+        let bestDist = Infinity;
+        let bestIdx = -1;
+        for (let i = 0; i < certSlides.length; i++) {
+          const sc = i * step + slideW / 2 + trackX;
+          const dist = Math.abs(mouseXInContainer - sc);
+          if (dist < bestDist) {
+            bestDist = dist;
+            bestIdx = i;
+          }
+        }
+        if (bestDist <= slideW * 0.65) {
+          targetIdx = bestIdx;
+        }
+      }
+    }
+
+    if (targetIdx === -1 || targetIdx === activeSlideIndex) {
+      clearCertHover();
       return;
     }
 
-    c.el.style.visibility = 'visible';
-
-    // Curve Flow 3D Transform: concave curved panoramic sweep with edge scaling
-    const rotY = -Math.max(-1.5, Math.min(1.5, u)) * 28; // Cards turn toward center
-    const tz = -Math.min(1.5, u * u) * 160; // Cards curve back in depth
-    const scale = Math.max(0.72, 1 - 0.20 * Math.min(1, absU)); // Edge scaling
-    const brightness = Math.max(0.65, 1 - 0.30 * Math.min(1, absU)); // Vignette focus
-    const zIndex = Math.round((1 - Math.min(1, absU)) * 50);
-
-    c.el.style.transform = `translate3d(${rawX.toFixed(1)}px, 0, ${tz.toFixed(1)}px) rotateY(${rotY.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
-    c.el.style.filter = `brightness(${brightness.toFixed(3)})`;
-    c.el.style.zIndex = zIndex;
-  });
-}
-
-function loopCurveFlow() {
-  if (!curveIsDragging) {
-    // Gentle momentum release
-    curveScrollOffset += curveVelocity;
-    curveVelocity *= 0.93;
-
-    // Continuous flow drift when not hovered
-    if (!curveIsHovered && Math.abs(curveVelocity) < 0.2) {
-      curveScrollOffset += 0.42;
+    if (targetIdx !== candidateSlideIndex) {
+      candidateSlideIndex = targetIdx;
+      if (hoverDwellTimer) clearTimeout(hoverDwellTimer);
+      // Dwell for 100ms so stopping/landing on a certificate triggers a smooth transition,
+      // without frantic skipping when casually sweeping the cursor across the screen.
+      hoverDwellTimer = setTimeout(() => {
+        if (candidateSlideIndex === targetIdx && targetIdx !== activeSlideIndex) {
+          snapTo(targetIdx);
+        }
+      }, 100);
     }
-  }
+  });
 
-  updateCurveFlowPositions();
-  curveRafId = requestAnimationFrame(loopCurveFlow);
+  carouselContainer.addEventListener('pointerleave', () => {
+    clearCertHover();
+    lastUserMouseX = -9999;
+    lastUserMouseY = -9999;
+  });
 }
 
-function setupCurveFlowEvents() {
-  if (!curveFlowViewportEl || curveInitialized) return;
-  curveInitialized = true;
-
-  // Pointer drag support (both mouse and touch)
-  curveFlowViewportEl.addEventListener('pointerdown', (e) => {
-    curveIsDragging = true;
-    curveDragDist = 0;
-    curveDragStartX = e.clientX;
-    curveDragLastX = e.clientX;
-    curveVelocity = 0;
-    try { curveFlowViewportEl.setPointerCapture(e.pointerId); } catch (_) {}
+// Arrow Buttons
+if (wheelLeft) {
+  wheelLeft.addEventListener('click', () => {
+    snapTo(activeSlideIndex - 1);
   });
-
-  window.addEventListener('pointermove', (e) => {
-    if (!curveIsDragging) return;
-    const dx = e.clientX - curveDragLastX;
-    curveDragDist += Math.abs(dx);
-    curveScrollOffset -= dx * 1.15;
-    curveVelocity = -dx * 0.85;
-    curveDragLastX = e.clientX;
-    updateCurveFlowPositions();
+}
+if (wheelRight) {
+  wheelRight.addEventListener('click', () => {
+    snapTo(activeSlideIndex + 1);
   });
+}
 
-  const onPointerUp = (e) => {
-    if (!curveIsDragging) return;
-    curveIsDragging = false;
-    try { curveFlowViewportEl.releasePointerCapture(e.pointerId); } catch (_) {}
-  };
-  window.addEventListener('pointerup', onPointerUp);
-  window.addEventListener('pointercancel', onPointerUp);
-
-  // Hover pause autoplay
-  curveFlowViewportEl.addEventListener('mouseenter', () => {
-    curveIsHovered = true;
-  });
-  curveFlowViewportEl.addEventListener('mouseleave', () => {
-    curveIsHovered = false;
-  });
-
-  // Trackpad / mouse wheel scroll
-  curveFlowViewportEl.addEventListener('wheel', (e) => {
-    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-    if (Math.abs(delta) > 2) {
-      curveVelocity += delta * 0.12;
-      curveVelocity = Math.max(-28, Math.min(28, curveVelocity));
+// Brand Filter Tags: Hover & Click
+if (certBrandsRow) {
+  certBrandsRow.addEventListener('mouseover', (e) => {
+    const brandItem = e.target.closest('.cert-brand-item');
+    if (!brandItem) return;
+    const brand = brandItem.dataset.brand;
+    const targetIdx = certSlides.findIndex(s => s.brand === brand);
+    if (targetIdx !== -1 && targetIdx !== activeSlideIndex) {
+      clearTimeout(slideHoverTimer);
+      slideHoverTimer = setTimeout(() => {
+        if (targetIdx !== activeSlideIndex) {
+          snapTo(targetIdx);
+        }
+      }, 120);
     }
-  }, { passive: true });
-
-  // Arrow button navigation
-  const prevBtn = document.getElementById('curveFlowPrev') || document.getElementById('wheelLeft');
-  const nextBtn = document.getElementById('curveFlowNext') || document.getElementById('wheelRight');
-
-  if (prevBtn) {
-    prevBtn.addEventListener('click', () => {
-      const spacing = getCurveSpacing();
-      curveVelocity = -spacing * 0.14;
-    });
-  }
-  if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
-      const spacing = getCurveSpacing();
-      curveVelocity = spacing * 0.14;
-    });
-  }
-
-  window.addEventListener('resize', () => {
-    updateCurveFlowPositions();
   });
-}
 
-// Lightbox modal viewer for certificates
-const certLightbox = document.getElementById('certLightbox');
-const certLightboxImg = document.getElementById('certLightboxImg');
-const certLightboxClose = document.getElementById('certLightboxClose');
-
-function openCertLightbox(src) {
-  if (certLightbox && certLightboxImg) {
-    certLightboxImg.src = src;
-    certLightbox.classList.add('open');
-    certLightbox.classList.add('active');
-  }
-}
-
-if (certLightboxClose && certLightbox) {
-  certLightboxClose.addEventListener('click', () => {
-    certLightbox.classList.remove('open');
-    certLightbox.classList.remove('active');
+  certBrandsRow.addEventListener('mouseleave', () => {
+    clearTimeout(slideHoverTimer);
   });
-  certLightbox.addEventListener('click', (e) => {
-    if (e.target === certLightbox) {
-      certLightbox.classList.remove('open');
-      certLightbox.classList.remove('active');
+
+  certBrandsRow.addEventListener('click', (e) => {
+    const brandItem = e.target.closest('.cert-brand-item');
+    if (!brandItem) return;
+    const brand = brandItem.dataset.brand;
+    const targetIdx = certSlides.findIndex(s => s.brand === brand);
+    if (targetIdx !== -1) {
+      snapTo(targetIdx);
     }
   });
 }
 
-function renderWheel() {
-  buildCurveFlowDOM();
-  updateCurveFlowPositions();
-}
+// Global layout update on view switch
+window.renderWheel = function() {
+  snapTo(activeSlideIndex, true);
+};
 
-document.addEventListener('DOMContentLoaded', () => {
-  buildCurveFlowDOM();
-});
-setTimeout(() => {
-  buildCurveFlowDOM();
-}, 200);
-
-window.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    if (certLightbox && certLightbox.classList.contains('open')) {
-      certLightbox.classList.remove('open');
-    }
-    if (introFileModal && introFileModal.classList.contains('open')) {
-      closeIntroModal();
-    }
-  } else if (e.key === 'ArrowRight' && introFileModal && introFileModal.classList.contains('open')) {
-    if (currentDossierPage < totalDossierPages - 1) showDossierPage(currentDossierPage + 1);
-  } else if (e.key === 'ArrowLeft' && introFileModal && introFileModal.classList.contains('open')) {
-    if (currentDossierPage > 0) showDossierPage(currentDossierPage - 1);
-  }
+window.addEventListener('resize', () => {
+  snapTo(activeSlideIndex, true);
 });
 
-// ====================================================================
-// PERSISTENT GRAVITY FOOTER WITH SMOOTH HOVER REPULSION & GUARANTEED PRIORITY FALLING
+// Initialize on script load
+buildDragableCarousel();
+
+
+// PERSISTENT GRAVITY FOOTER WITH BUTTER-SMOOTH PHYSICS & GUARANTEED CONTACT PRIORITY
 // - Email, LinkedIn, GitHub, Resume ALWAYS fall first, land on the ground in front,
 //   and remain completely visible and easily clickable.
-// - Smooth hover repulsion & dynamic cursor physics (ported from Framer Talus).
+// - Fluid delta-time simulation, realistic elasticity, natural air damping,
+//   soft mutual settling, and rock-steady scroll re-arm hysteresis.
 // ====================================================================
 
 const nonFunctioningItems = [
-  { img: 'footer/download__14_-removebg-preview.png', clickable: false },
-  { img: 'footer/download__14_-removebg-preview.png', clickable: false },
-  { img: 'footer/download__14_-removebg-preview.png', clickable: false },
-  { img: 'footer/download__14_-removebg-preview.png', clickable: false },
-  { img: 'footer/download__15_-removebg-preview.png', clickable: false },
-  { img: 'footer/download__15_-removebg-preview.png', clickable: false },
-  { img: 'footer/download__15_-removebg-preview.png', clickable: false },
-  { img: 'footer/download__15_-removebg-preview.png', clickable: false },
-  { img: 'footer/Round_Guy-removebg-preview.png', clickable: false },
-  { img: 'footer/Round_Guy-removebg-preview.png', clickable: false },
-  { img: 'footer/Round_Guy-removebg-preview.png', clickable: false },
-  { img: 'footer/Round_Guy-removebg-preview.png', clickable: false },
+  { img: 'footer/download__14_-removebg-preview.png', clickable: false, bounce: 0.32 },
+  { img: 'footer/download__14_-removebg-preview.png', clickable: false, bounce: 0.30 },
+  { img: 'footer/download__14_-removebg-preview.png', clickable: false, bounce: 0.28 },
+  { img: 'footer/download__14_-removebg-preview.png', clickable: false, bounce: 0.33 },
+  { img: 'footer/download__15_-removebg-preview.png', clickable: false, bounce: 0.34 },
+  { img: 'footer/download__15_-removebg-preview.png', clickable: false, bounce: 0.31 },
+  { img: 'footer/download__15_-removebg-preview.png', clickable: false, bounce: 0.29 },
+  { img: 'footer/download__15_-removebg-preview.png', clickable: false, bounce: 0.35 },
+  { img: 'footer/Round_Guy-removebg-preview.png', clickable: false, bounce: 0.46 },
+  { img: 'footer/Round_Guy-removebg-preview.png', clickable: false, bounce: 0.48 },
+  { img: 'footer/Round_Guy-removebg-preview.png', clickable: false, bounce: 0.44 },
+  { img: 'footer/Round_Guy-removebg-preview.png', clickable: false, bounce: 0.50 }
 ];
 
 const functioningItems = [
-  { img: 'footer/Screenshot_2026-10-08_192555-removebg-preview.png', action: 'email', clickable: true },
-  { img: 'footer/Screenshot_2026-10-08_192555-removebg-preview.png', action: 'email', clickable: true },
-  { img: 'footer/Screenshot_2026-10-08_192558-removebg-preview.png', action: 'resume', clickable: true },
-  { img: 'footer/Screenshot_2026-10-08_192558-removebg-preview.png', action: 'resume', clickable: true },
-  { img: 'footer/Screenshot_2026-10-08_192601-removebg-preview.png', action: 'linkedin', clickable: true },
-  { img: 'footer/Screenshot_2026-10-08_192601-removebg-preview.png', action: 'linkedin', clickable: true },
-  { img: 'footer/Screenshot_2026-10-08_192605-removebg-preview.png', action: 'github', clickable: true },
-  { img: 'footer/Screenshot_2026-10-08_192605-removebg-preview.png', action: 'github', clickable: true },
+  { img: 'footer/Screenshot_2026-10-08_192555-removebg-preview.png', action: 'email', clickable: true, bounce: 0.32 },
+  { img: 'footer/Screenshot_2026-10-08_192555-removebg-preview.png', action: 'email', clickable: true, bounce: 0.32 },
+  { img: 'footer/Screenshot_2026-10-08_192558-removebg-preview.png', action: 'resume', clickable: true, bounce: 0.30 },
+  { img: 'footer/Screenshot_2026-10-08_192558-removebg-preview.png', action: 'resume', clickable: true, bounce: 0.30 },
+  { img: 'footer/Screenshot_2026-10-08_192601-removebg-preview.png', action: 'linkedin', clickable: true, bounce: 0.32 },
+  { img: 'footer/Screenshot_2026-10-08_192601-removebg-preview.png', action: 'linkedin', clickable: true, bounce: 0.32 },
+  { img: 'footer/Screenshot_2026-10-08_192605-removebg-preview.png', action: 'github', clickable: true, bounce: 0.30 },
+  { img: 'footer/Screenshot_2026-10-08_192605-removebg-preview.png', action: 'github', clickable: true, bounce: 0.30 }
 ];
 
 const fallingArea = document.getElementById('fallingArea');
 const gravityFooter = document.getElementById('contact');
 const fallingBodies = [];
 let footerDOMCreated = false;
-let footerAnimRunning = false;
+let footerAnimId = null;
+let lastPhysicsTime = 0;
 let currentDragged = null;
 let dragStartX = 0, dragStartY = 0;
 let dragInitialItemX = 0, dragInitialItemY = 0;
 let hasMovedFar = false;
+let lastDropTimestamp = 0;
 
-// Hover repulsion removed per user request so icons rest stably and are 100% effortless to click!
 function buildFooterDOM() {
   if (footerDOMCreated) return;
   footerDOMCreated = true;
@@ -4747,6 +5629,7 @@ function buildFooterDOM() {
     const img = document.createElement('img');
     img.src = item.img;
     img.alt = item.action || 'Decoration';
+    img.draggable = false;
     el.appendChild(img);
 
     fallingArea.appendChild(el);
@@ -4755,11 +5638,12 @@ function buildFooterDOM() {
       el: el,
       data: item,
       x: 0,
-      y: -250,
+      y: -300,
       vx: 0,
       vy: 0,
       rotation: 0,
       vr: 0,
+      bounce: item.bounce || 0.32,
       grounded: false,
       groundTarget: 0,
       isDragged: false,
@@ -4788,22 +5672,31 @@ function buildFooterDOM() {
   });
 }
 
-// User Request: Email, LinkedIn, GitHub, Resume ALWAYS fall first, land on the ground,
-// and sit in FRONT (zIndex 50) so they are immediately visible and clickable!
+// User Request: "the github, linkedin, resume, email icons, one copy of them fall straight to the front so that its easy for users to find
+// and all other icons are mixed and fall randomly"
 function dropItems() {
   buildFooterDOM();
 
-  const areaW = fallingArea.offsetWidth || 550;
-  const areaH = fallingArea.offsetHeight || 520;
+  // Cancel any running animation loop to eliminate duplicate physics updates
+  if (footerAnimId) {
+    cancelAnimationFrame(footerAnimId);
+    footerAnimId = null;
+  }
 
-  // Distinct functional icons: Email, LinkedIn, GitHub, Resume
-  const frontActions = ['email', 'linkedin', 'github', 'resume'];
+  const areaW = (fallingArea && fallingArea.offsetWidth > 100) ? fallingArea.offsetWidth : 550;
+  const areaH = (fallingArea && fallingArea.offsetHeight > 100) ? fallingArea.offsetHeight : 500;
+  const itemW = areaW < 600 ? 85 : 120;
+  const itemH = areaW < 600 ? 80 : 105;
+
+  // Exact 4 priority contact hero icons: GitHub, LinkedIn, Resume, Email
+  const heroActions = ['github', 'linkedin', 'resume', 'email'];
   const frontHeroes = [];
   const otherBodies = [];
   const chosenActions = new Set();
 
+  // Separate one copy of each hero action
   fallingBodies.forEach(b => {
-    if (b.data && frontActions.includes(b.data.action) && !chosenActions.has(b.data.action)) {
+    if (b.data && heroActions.includes(b.data.action) && !chosenActions.has(b.data.action)) {
       chosenActions.add(b.data.action);
       b.isFrontHero = true;
       frontHeroes.push(b);
@@ -4813,107 +5706,224 @@ function dropItems() {
     }
   });
 
-  // 4 well-spaced front ground positions: Email, LinkedIn, GitHub, Resume
+  // Sort heroes in user-specified order: GitHub, LinkedIn, Resume, Email
+  frontHeroes.sort((a, b) => heroActions.indexOf(a.data.action) - heroActions.indexOf(b.data.action));
+
+  // 4 well-spaced front ground positions across usable width
+  const usableWidth = Math.max(100, areaW - itemW - 30);
   const frontSlots = [
-    15 + (areaW - 150) * 0.10,
-    15 + (areaW - 150) * 0.36,
-    15 + (areaW - 150) * 0.62,
-    15 + (areaW - 150) * 0.88
+    15 + usableWidth * 0.05,
+    15 + usableWidth * 0.35,
+    15 + usableWidth * 0.65,
+    15 + usableWidth * 0.95
   ];
 
+  // 1. FRONT HEROES: Fall straight down, upright, in front (zIndex: 50)
   frontHeroes.forEach((b, idx) => {
     b.grounded = false;
     b.isDragged = false;
     b.defaultZ = '50';
-    b.el.style.zIndex = '50'; // ALWAYS in front of all background stickers
-    b.groundTarget = areaH - 110; // Lands right on the ground in front
-    b.x = Math.max(12, Math.min(areaW - 145, frontSlots[idx] + (Math.random() - 0.5) * 16));
-    b.y = -50 - (idx * 25); // Drops FIRST
-    b.vx = (Math.random() - 0.5) * 1.2;
-    b.vy = 4.2 + Math.random() * 1.5; // Fast initial drop to hit ground first
-    b.rotation = (Math.random() - 0.5) * 14;
-    b.vr = (Math.random() - 0.5) * 1.5;
+    b.el.style.zIndex = '50'; // ALWAYS in front of all stickers
+    b.groundTarget = areaH - itemH - 12; // Lands right on the ground in front
+    b.x = frontSlots[idx]; // Exact straight slot
+    b.y = -60 - (idx * 16); // Falls promptly and smoothly
+    b.vx = 0; // Falls STRAIGHT down
+    b.vy = 3.2; // Clean steady fall speed
+    b.rotation = 0; // Standing upright so icon is 100% readable
+    b.vr = 0; // Zero rotation
+    b.el.style.transform = `translate3d(${b.x.toFixed(2)}px, ${b.y.toFixed(2)}px, 0) rotate(0deg)`;
   });
 
-  // Decorative stickers drop after and settle in the background/midground
-  const otherCount = otherBodies.length;
+  // 2. OTHER ICONS: Thoroughly shuffled and mixed so similar icons NEVER fall together
+  // Fisher-Yates shuffle otherBodies
+  for (let i = otherBodies.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [otherBodies[i], otherBodies[j]] = [otherBodies[j], otherBodies[i]];
+  }
+
+  // Pre-generate shuffled, well-distributed X positions across the full width
+  const numOthers = otherBodies.length;
+  const xSlots = [];
+  for (let s = 0; s < numOthers; s++) {
+    const base = 12 + (s / Math.max(1, numOthers - 1)) * usableWidth;
+    xSlots.push(base);
+  }
+  for (let i = xSlots.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [xSlots[i], xSlots[j]] = [xSlots[j], xSlots[i]];
+  }
+
+  // Stagger and randomize each item in otherBodies
   otherBodies.forEach((b, i) => {
     b.grounded = false;
     b.isDragged = false;
-    b.defaultZ = String(5 + (i % 8));
+    b.defaultZ = String(4 + (i % 14));
     b.el.style.zIndex = b.defaultZ;
-    b.groundTarget = areaH - 145 - ((i % 3) * 26) - (Math.random() * 14); // Sits behind
-    const ratio = i / Math.max(1, otherCount - 1);
-    b.x = Math.max(10, Math.min(areaW - 145, 12 + ratio * (areaW - 150) + (Math.random() - 0.5) * 24));
-    b.y = -130 - Math.random() * 220 - (i * 20); // Drops after heroes
-    b.vx = (Math.random() - 0.5) * 2.2;
-    b.vy = 2.2 + Math.random() * 2.0;
-    b.rotation = (Math.random() - 0.5) * 30;
-    b.vr = (Math.random() - 0.5) * 2.5;
+
+    // Random mixed X position
+    const slotX = xSlots[i] + (Math.random() - 0.5) * (usableWidth / numOthers * 0.85);
+    b.x = Math.max(10, Math.min(areaW - itemW - 10, slotX));
+
+    // Randomized cascade heights so they rain down organically
+    b.y = -90 - (Math.random() * 240) - (i * 18);
+    b.vx = (Math.random() - 0.5) * 2.2; // Random drift
+    b.vy = 2.0 + Math.random() * 2.2;   // Varied fall speeds
+    b.rotation = (Math.random() - 0.5) * 45; // Playful tilt
+    b.vr = (Math.random() - 0.5) * 1.8;      // Natural tumble
+
+    // Sits in midground/background layers behind front heroes
+    b.groundTarget = Math.max(areaH - 240, areaH - itemH - 35 - (Math.random() * 70));
+    b.el.style.transform = `translate3d(${b.x.toFixed(2)}px, ${b.y.toFixed(2)}px, 0) rotate(${b.rotation.toFixed(2)}deg)`;
   });
 
-  footerAnimRunning = true;
-  requestAnimationFrame(animateFalling);
+  lastPhysicsTime = performance.now();
+  lastDropTimestamp = performance.now();
+  footerAnimId = requestAnimationFrame(animateFalling);
 }
 
-function animateFalling() {
-  const areaW = fallingArea.offsetWidth || 550;
+function animateFalling(now) {
+  if (!now) now = performance.now();
+  const elapsed = lastPhysicsTime ? (now - lastPhysicsTime) : 16.667;
+  lastPhysicsTime = now;
+
+  // Normalized delta-time (1.0 at 60fps)
+  const dt = Math.min(32, Math.max(8, elapsed)) / 16.667;
+
+  const areaW = (fallingArea && fallingArea.offsetWidth > 100) ? fallingArea.offsetWidth : 550;
+  const itemW = areaW < 600 ? 85 : 120;
+  const gravity = 0.38 * dt;
   let anyMoving = false;
 
+  // 1. Move active items with sub-pixel physics
   fallingBodies.forEach((b) => {
-    if (b.isDragged) return;
+    if (b.isDragged) {
+      anyMoving = true;
+      return;
+    }
 
     if (!b.grounded) {
       anyMoving = true;
-      b.vy += 0.38; // Gravity
-      b.y += b.vy;
-      b.x += b.vx;
-      b.rotation += b.vr;
+      b.vy += gravity;
 
-      // Wall bounce
-      if (b.x < 5) {
-        b.x = 5;
-        b.vx = Math.abs(b.vx) * 0.6;
-      } else if (b.x > areaW - 145) {
-        b.x = areaW - 145;
-        b.vx = -Math.abs(b.vx) * 0.6;
+      if (b.isFrontHero) {
+        // Front heroes fall STRAIGHT down without sideways drift or wobble
+        b.vx = 0;
+        b.vr = 0;
+        b.rotation = 0;
+      } else {
+        // Other bodies have air drag & rotation
+        b.vx *= Math.pow(0.994, dt);
+        b.vr *= Math.pow(0.988, dt);
       }
 
-      // Ground landing
+      // Terminal velocity clamp
+      if (b.vy > 14) b.vy = 14;
+
+      b.x += b.vx * dt;
+      b.y += b.vy * dt;
+      b.rotation += b.vr * dt;
+
+      // Soft wall bounce
+      if (b.x < 8) {
+        b.x = 8;
+        b.vx = Math.abs(b.vx) * 0.55;
+      } else if (b.x > areaW - itemW - 8) {
+        b.x = areaW - itemW - 8;
+        b.vx = -Math.abs(b.vx) * 0.55;
+      }
+
+      // Ground collision
       if (b.y >= b.groundTarget) {
         b.y = b.groundTarget;
-        b.vy = -b.vy * 0.28; // Bounce
-        b.vx *= 0.75;
-        b.vr *= 0.7;
 
-        if (Math.abs(b.vy) < 0.45 && Math.abs(b.vx) < 0.25) {
-          b.vy = 0;
+        if (b.isFrontHero) {
+          // Front heroes land cleanly upright and stay in front
           b.vx = 0;
           b.vr = 0;
-          b.grounded = true;
+          b.rotation = 0;
+          if (Math.abs(b.vy) > 1.2) {
+            b.vy = -b.vy * 0.22;
+          } else {
+            b.vy = 0;
+            b.grounded = true;
+          }
+        } else {
+          // Other bodies bounce and tumble naturally
+          if (Math.abs(b.vy) > 1.2) {
+            b.vy = -b.vy * b.bounce;
+            b.vx *= Math.pow(0.75, dt);
+            b.vr = b.vr * 0.65 + (Math.random() - 0.5) * 1.0;
+          } else {
+            // Settling phase
+            b.vy *= 0.5;
+            b.vx *= Math.pow(0.82, dt);
+            b.vr *= Math.pow(0.82, dt);
+            if (Math.abs(b.vy) < 0.35 && Math.abs(b.vx) < 0.2 && Math.abs(b.vr) < 0.2) {
+              b.vy = 0;
+              b.vx = 0;
+              b.vr = 0;
+              b.grounded = true;
+            }
+          }
         }
       }
     } else {
-      // Resting on ground but responds to hover impulses
-      if (Math.abs(b.vx) > 0.05 || Math.abs(b.vy) > 0.05) {
-        anyMoving = true;
-        b.x += b.vx;
-        b.y += b.vy;
-        b.vx *= 0.92;
-        b.vy *= 0.92;
-        b.rotation += b.vr;
-        b.vr *= 0.9;
-        if (b.y > b.groundTarget) b.y = b.groundTarget;
+      // Grounded items check for residual nudge velocities
+      if (!b.isFrontHero) {
+        if (Math.abs(b.vx) > 0.04 || Math.abs(b.vy) > 0.04 || Math.abs(b.vr) > 0.04) {
+          anyMoving = true;
+          b.x += b.vx * dt;
+          b.y += b.vy * dt;
+          b.rotation += b.vr * dt;
+          b.vx *= Math.pow(0.88, dt);
+          b.vy *= Math.pow(0.88, dt);
+          b.vr *= Math.pow(0.88, dt);
+          if (b.y > b.groundTarget) b.y = b.groundTarget;
+          if (b.x < 8) { b.x = 8; b.vx = 0; }
+          if (b.x > areaW - itemW - 8) { b.x = areaW - itemW - 8; b.vx = 0; }
+        }
       }
     }
 
-    b.el.style.transform = `translate(${b.x.toFixed(1)}px, ${b.y.toFixed(1)}px) rotate(${b.rotation.toFixed(2)}deg)`;
+    // Hardware accelerated GPU composited transform
+    b.el.style.transform = `translate3d(${b.x.toFixed(2)}px, ${b.y.toFixed(2)}px, 0) rotate(${b.rotation.toFixed(2)}deg)`;
   });
 
-  if (anyMoving) {
-    requestAnimationFrame(animateFalling);
+  // 2. Soft horizontal settling between items so they spread naturally without clipping
+  for (let i = 0; i < fallingBodies.length; i++) {
+    const b1 = fallingBodies[i];
+    for (let j = i + 1; j < fallingBodies.length; j++) {
+      const b2 = fallingBodies[j];
+      const dx = b2.x - b1.x;
+      const dy = b2.y - b1.y;
+      const dist = Math.hypot(dx, dy);
+      const minDist = 62;
+      if (dist < minDist && dist > 1 && (b1.y > b1.groundTarget - 60 || b2.y > b2.groundTarget - 60)) {
+        const force = ((minDist - dist) / minDist) * 0.28 * dt;
+        const nx = dx / dist;
+
+        // Front heroes stay straight and anchored in their front columns
+        if (b1.isFrontHero && !b2.isFrontHero) {
+          b2.vx += (dx >= 0 ? 1 : -1) * force * 1.6;
+          if (b2.grounded) b2.grounded = false;
+        } else if (!b1.isFrontHero && b2.isFrontHero) {
+          b1.vx += (dx < 0 ? 1 : -1) * force * 1.6;
+          if (b1.grounded) b1.grounded = false;
+        } else if (!b1.isFrontHero && !b2.isFrontHero) {
+          b1.vx -= nx * force;
+          b2.vx += nx * force;
+          if (b1.grounded && Math.abs(force) > 0.05) b1.grounded = false;
+          if (b2.grounded && Math.abs(force) > 0.05) b2.grounded = false;
+        }
+        anyMoving = true;
+      }
+    }
+  }
+
+  if (anyMoving || currentDragged) {
+    footerAnimId = requestAnimationFrame(animateFalling);
   } else {
-    footerAnimRunning = false;
+    footerAnimId = null;
   }
 }
 
@@ -4946,7 +5956,7 @@ function startDrag(e, body) {
     currentDragged.y = dragInitialItemY + dy;
     currentDragged.vx = dx * 0.15;
     currentDragged.vy = dy * 0.15;
-    currentDragged.el.style.transform = `translate(${currentDragged.x}px, ${currentDragged.y}px) rotate(${currentDragged.rotation}deg)`;
+    currentDragged.el.style.transform = `translate3d(${currentDragged.x.toFixed(2)}px, ${currentDragged.y.toFixed(2)}px, 0) rotate(${currentDragged.rotation.toFixed(2)}deg)`;
   }
 
   function onEnd() {
@@ -4964,9 +5974,9 @@ function startDrag(e, body) {
         executeAction(currentDragged.data.action);
       }
       currentDragged = null;
-      if (!footerAnimRunning) {
-        footerAnimRunning = true;
-        requestAnimationFrame(animateFalling);
+      if (!footerAnimId) {
+        lastPhysicsTime = performance.now();
+        footerAnimId = requestAnimationFrame(animateFalling);
       }
     }
   }
@@ -4981,7 +5991,7 @@ function executeAction(action) {
   if (action === 'email') {
     window.location.href = 'mailto:aleenafvg@gmail.com';
   } else if (action === 'linkedin') {
-    window.open('https://www.linkedin.com/in/aleena-burney-0b445828a/', '_blank', 'noopener,noreferrer');
+    window.open('https://www.linkedin.com/in/aleena-burney/', '_blank', 'noopener,noreferrer');
   } else if (action === 'github') {
     window.open('https://github.com/aleenafvg', '_blank', 'noopener,noreferrer');
   } else if (action === 'resume') {
@@ -4989,35 +5999,80 @@ function executeAction(action) {
   }
 }
 
-// Global scroll listener: whenever user scrolls down into the footer, drop items freshly
-let lastScrollY = window.scrollY;
-let footerTriggerArmed = true;
+// ====================================================================
+// FOOTER GRAVITY TRIGGER: User Request: "the footers must fall everytime i scroll back up then down"
+// Clean hysteresis so it only re-arms when footer is scrolled fully out of view,
+// and drops smoothly when entering the viewport.
+// ====================================================================
+let footerArmed = true;
+let footerLastScrollY = window.scrollY;
 
 function checkFooterScrollDrop() {
   if (!gravityFooter) return;
   const rect = gravityFooter.getBoundingClientRect();
-  const currentScrollY = window.scrollY;
-  const isScrollingDown = currentScrollY > lastScrollY;
-  lastScrollY = currentScrollY;
+  const currentY = window.scrollY;
+  const scrollingDown = currentY > footerLastScrollY;
+  footerLastScrollY = currentY;
 
-  if (rect.top <= window.innerHeight * 0.95 && rect.bottom >= 0) {
-    if (footerTriggerArmed && isScrollingDown) {
-      footerTriggerArmed = false;
+  // Re-arm ONLY when user has scrolled away (footer is completely off screen)
+  if (rect.top > window.innerHeight + 80 || rect.bottom < -80) {
+    footerArmed = true;
+  }
+
+  // Trigger freshly when user scrolls down and the footer enters into view
+  if (footerArmed && scrollingDown && rect.top < window.innerHeight * 0.90 && rect.bottom > 80) {
+    const now = performance.now();
+    // 1.2s cooldown so continuous scrolling doesn't re-interrupt a fall in progress
+    if (now - lastDropTimestamp > 1200) {
+      footerArmed = false;
       dropItems();
     }
-  } else if (rect.top > window.innerHeight) {
-    footerTriggerArmed = true;
   }
 }
 
 window.addEventListener('scroll', checkFooterScrollDrop, { passive: true });
 
+// Observer re-arms reliably if user uses PageUp/Home/Hash links
+const footerScrollObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting || entry.intersectionRatio === 0) {
+      footerArmed = true;
+    }
+  });
+}, { threshold: [0, 0.05] });
+
+if (gravityFooter) {
+  footerScrollObserver.observe(gravityFooter);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   dropItems();
 });
-setTimeout(() => {
-  dropItems();
-}, 250);
+
+
+// ==================== GLOBAL VIEW & ACTIVE SECTION STATE ====================
+let currentActiveView = 'home';
+let currentActiveSection = 'home';
+window._gooeyControllers = [];
+
+// Global updater to sync all GooeyNavbars across the entire portfolio
+window.updateGooeyNavbarsActive = function(targetName) {
+  currentActiveSection = targetName;
+  document.querySelectorAll('.gooey-navbar-wrap').forEach(wrap => {
+    wrap.dataset.activeTarget = targetName;
+    wrap.querySelectorAll('.gooey-item').forEach(item => {
+      item.classList.toggle('active', item.dataset.navTarget === targetName);
+    });
+  });
+
+  if (Array.isArray(window._gooeyControllers)) {
+    window._gooeyControllers.forEach(c => {
+      if (c && typeof c.setActiveTarget === 'function') {
+        c.setActiveTarget(targetName);
+      }
+    });
+  }
+};
 
 // ==================== VIEW CONTROLLER (LOAD MENU IN PLACE OF HERO) ====================
 const views = {
@@ -5029,12 +6084,34 @@ const views = {
 
 function activateView(targetName, smoothScroll = true) {
   if (targetName === 'contact') {
+    currentActiveSection = 'contact';
     const footer = document.getElementById('contact');
     if (footer) {
       footer.scrollIntoView({ behavior: 'smooth' });
     }
-    footerArmed = false;
-    dropItems();
+    footerArmed = true;
+    setTimeout(() => {
+      const rect = footer ? footer.getBoundingClientRect() : null;
+      if (rect && rect.top < window.innerHeight * 0.95 && footerArmed) {
+        footerArmed = false;
+        dropItems();
+      }
+    }, 450);
+
+    // Update navigation indicators to CONTACT
+    document.querySelectorAll('.hero-nav .nav-link').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.navTarget === 'contact');
+    });
+    if (typeof window.updateFloatingDockActive === 'function') {
+      window.updateFloatingDockActive('contact');
+    }
+    if (typeof window.updateGooeyNavbarsActive === 'function') {
+      window.updateGooeyNavbarsActive('contact');
+    }
+
+    if (history.replaceState) {
+      history.replaceState(null, '', '#contact');
+    }
     return;
   }
 
@@ -5044,6 +6121,8 @@ function activateView(targetName, smoothScroll = true) {
   document.body.scrollTop = 0;
 
   const validTarget = views[targetName] ? targetName : 'home';
+  currentActiveView = validTarget;
+  currentActiveSection = validTarget;
 
   // Always close blackout dossier when switching views (shows red background with centered folder for About)
   if (typeof closeDossierStage === 'function') {
@@ -5073,6 +6152,14 @@ function activateView(targetName, smoothScroll = true) {
     btn.classList.toggle('active', btn.dataset.navTarget === validTarget);
   });
 
+  // Sync Floating Dock / Native Navbar
+  if (typeof window.updateFloatingDockActive === 'function') {
+    window.updateFloatingDockActive(validTarget);
+  }
+  if (typeof window.updateGooeyNavbarsActive === 'function') {
+    window.updateGooeyNavbarsActive(validTarget);
+  }
+
   // Reset footer view tracking so dropping re-triggers naturally on scroll
   footerInView = false;
 
@@ -5100,6 +6187,40 @@ document.querySelectorAll('[data-nav-target]').forEach(el => {
   });
 });
 
+// ====================================================================
+// SECTION SCROLL SPY (CONTACT vs ACTIVE VIEW)
+// Tracks whether user has scrolled to the contact footer or is in current view
+// ====================================================================
+function updateActiveSectionOnScroll() {
+  const contact = document.getElementById('contact');
+  if (!contact) return;
+  const rect = contact.getBoundingClientRect();
+  const docHeight = Math.max(
+    document.body.scrollHeight,
+    document.documentElement.scrollHeight,
+    document.body.offsetHeight,
+    document.documentElement.offsetHeight
+  );
+  const isNearBottom = (window.innerHeight + window.scrollY >= docHeight - 80);
+  const isContactActive = isNearBottom || (rect.top <= window.innerHeight * 0.5 && rect.bottom > 80);
+
+  const targetSection = isContactActive ? 'contact' : currentActiveView;
+  if (targetSection !== currentActiveSection) {
+    currentActiveSection = targetSection;
+    if (typeof window.updateGooeyNavbarsActive === 'function') {
+      window.updateGooeyNavbarsActive(targetSection);
+    }
+    if (typeof window.updateFloatingDockActive === 'function') {
+      window.updateFloatingDockActive(targetSection);
+    }
+    document.querySelectorAll('.hero-nav .nav-link').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.navTarget === targetSection);
+    });
+  }
+}
+
+window.addEventListener('scroll', updateActiveSectionOnScroll, { passive: true });
+
 // Handle initial URL hash or query on load (e.g., #about, #projects, #certs, #contact)
 window.addEventListener('DOMContentLoaded', () => {
   const urlParams = new URLSearchParams(window.location.search);
@@ -5109,17 +6230,617 @@ window.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
       const footer = document.getElementById('contact');
       if (footer) footer.scrollIntoView({ behavior: 'auto' });
+      activateView('contact');
     }, 60);
   } else if (hash === 'contact') {
     activateView('home', false);
     setTimeout(() => {
       const footer = document.getElementById('contact');
       if (footer) footer.scrollIntoView({ behavior: 'smooth' });
+      activateView('contact');
     }, 350);
   } else if (views[hash]) {
     activateView(hash, false);
+  } else {
+    activateView('home', false);
   }
 });
+
+// ====================================================================
+// FRAMER GOOEY NAVBAR COMPONENT ENGINE
+// Ported from: https://framer.com/m/GooeyNavbar-TLFB27.js@bCvGv6MKodKnLTwoldCF
+// True circular arc pills & tangent fillet waists with spring physics
+// ====================================================================
+
+let gooeyNavbarsInitialized = false;
+
+function initGooeyNavbars() {
+  const wrappers = Array.from(document.querySelectorAll('.gooey-navbar-wrap'));
+  if (!wrappers.length) return;
+
+  if (gooeyNavbarsInitialized) {
+    if (typeof window.updateGooeyNavbarsActive === 'function') {
+      window.updateGooeyNavbarsActive(currentActiveSection || 'home');
+    }
+    return;
+  }
+  gooeyNavbarsInitialized = true;
+
+  function round(val) {
+    return (Math.round(val * 100) / 100).toString();
+  }
+
+  function pillPath(rect, radius) {
+    const r = Math.min(radius, rect.width / 2, rect.height / 2);
+    const { x, y, width: w, height: h } = rect;
+    return [
+      `M${round(x)} ${round(y + r)}`,
+      `A${round(r)} ${round(r)} 0 0 1 ${round(x + r)} ${round(y)}`,
+      `L${round(x + w - r)} ${round(y)}`,
+      `A${round(r)} ${round(r)} 0 0 1 ${round(x + w)} ${round(y + r)}`,
+      `L${round(x + w)} ${round(y + h - r)}`,
+      `A${round(r)} ${round(r)} 0 0 1 ${round(x + w - r)} ${round(y + h)}`,
+      `L${round(x + r)} ${round(y + h)}`,
+      `A${round(r)} ${round(r)} 0 0 1 ${round(x)} ${round(y + h - r)}`,
+      'Z'
+    ].join(' ');
+  }
+
+  function waistPath(left, right, radius, neck, openness) {
+    if (openness <= 0.02) return null;
+    const h = left.height;
+    const cy = left.y + h / 2;
+    const r = Math.min(radius, h / 2, left.width / 2, right.width / 2);
+    if (r <= 0) return null;
+    const xa = left.x + left.width;
+    const xb = right.x;
+    const gap = xb - xa;
+    if (gap < 0) return null;
+    const waistHalf = Math.min((neck / 2) * openness, h / 2 - 0.5);
+    const across = gap / 2 + r;
+    const drop = waistHalf - h / 2 + r;
+    const denom = 2 * (drop - r);
+    if (Math.abs(denom) < 1e-4) return null;
+    const fillet = (r * r - across * across - drop * drop) / denom;
+    if (!(fillet > 0) || r + fillet < across) return null;
+    const rise = Math.sqrt(Math.max(0, (r + fillet) * (r + fillet) - across * across));
+    const midX = (xa + xb) / 2;
+    const cornerX = xa - r;
+    const cornerY = left.y + r;
+    const vx = midX - cornerX;
+    const vy = left.y + r - rise - cornerY;
+    const len = Math.hypot(vx, vy) || 1;
+    const tax = cornerX + (r * vx) / len;
+    const tay = cornerY + (r * vy) / len;
+    const tbx = 2 * midX - tax;
+    return [
+      `M${round(tax)} ${round(tay)}`,
+      `A${round(fillet)} ${round(fillet)} 0 0 0 ${round(tbx)} ${round(tay)}`,
+      `L${round(tbx)} ${round(2 * cy - tay)}`,
+      `A${round(fillet)} ${round(fillet)} 0 0 0 ${round(tax)} ${round(2 * cy - tay)}`,
+      'Z'
+    ].join(' ');
+  }
+
+  const controllers = wrappers.map((wrap) => {
+    const container = wrap.querySelector('.gooey-navbar');
+    const basePath = wrap.querySelector('.gooey-base-path');
+    const glowPath = wrap.querySelector('.gooey-glow-path');
+    const gradient = wrap.querySelector('radialGradient');
+    const items = Array.from(wrap.querySelectorAll('.gooey-item'));
+    if (!container || !basePath || !items.length) return null;
+
+    let baseRects = [];
+    let hoveredIndex = null;
+    let pointerInside = false;
+    let currentIndex = 0;
+    const initialTarget = currentActiveSection || wrap.dataset.activeTarget || 'home';
+    const initialActiveIdx = items.findIndex(el => el.dataset.navTarget === initialTarget);
+    if (initialActiveIdx !== -1) currentIndex = initialActiveIdx;
+
+    // Immediately reflect active dot on all items in this wrapper
+    items.forEach((item, i) => {
+      item.classList.toggle('active', i === currentIndex);
+    });
+
+    const gap = 14;
+    const neighborPush = 10;
+    const neckRatio = 0.42;
+    const stiffness = 260;
+    const damping = 30;
+    const mass = 1;
+
+    let openness = new Array(items.length - 1).fill(0);
+    let velocity = new Array(items.length - 1).fill(0);
+    let animFrame = 0;
+    let lastTime = performance.now();
+
+    function measure() {
+      // Check if wrapper is in a visible container
+      if (wrap.offsetWidth === 0 && wrap.offsetHeight === 0) return;
+      baseRects = items.map(el => {
+        let x = el.offsetLeft;
+        let y = el.offsetTop;
+        let parent = el.offsetParent;
+        while (parent && parent !== container) {
+          x += parent.offsetLeft;
+          y += parent.offsetTop;
+          parent = parent.offsetParent;
+        }
+        return {
+          x,
+          y,
+          width: el.offsetWidth,
+          height: el.offsetHeight
+        };
+      });
+      requestSpring();
+    }
+
+    function spreadFrom(open) {
+      const out = new Array(baseRects.length);
+      if (baseRects.length === 0) return out;
+      out[0] = baseRects[0].x;
+      for (let i = 1; i < baseRects.length; i++) {
+        out[i] = out[i - 1] + baseRects[i - 1].width + gap + neighborPush * (open[i - 1] ?? 0);
+      }
+      return out;
+    }
+
+    function computeShifts() {
+      const count = baseRects.length;
+      if (count === 0) return [];
+      const positions = spreadFrom(openness);
+      const balance = xs => {
+        let moment = 0, total = 0;
+        for (let i = 0; i < count; i++) {
+          const w = baseRects[i].width;
+          moment += (xs[i] + w / 2) * w;
+          total += w;
+        }
+        return total > 0 ? moment / total : 0;
+      };
+      const offset = balance(baseRects.map(r => r.x)) - balance(positions);
+      return positions.map((x, i) => x + offset - baseRects[i].x);
+    }
+
+    function renderFrame() {
+      if (!baseRects.length) return;
+      const shifts = computeShifts();
+      const pillHeight = baseRects[0]?.height || 44;
+      const radiusPx = pillHeight / 2;
+
+      const shapeRects = baseRects.map((rect, i) => ({
+        ...rect,
+        x: rect.x + (shifts[i] ?? 0)
+      }));
+
+      const parts = [];
+      for (const rect of shapeRects) {
+        parts.push(pillPath(rect, radiusPx));
+      }
+      for (let i = 0; i < shapeRects.length - 1; i++) {
+        const d = waistPath(shapeRects[i], shapeRects[i + 1], radiusPx, pillHeight * neckRatio, openness[i] ?? 0);
+        if (d) parts.push(d);
+      }
+      const shapeData = parts.join(' ');
+      basePath.setAttribute('d', shapeData);
+      if (glowPath) glowPath.setAttribute('d', shapeData);
+
+      items.forEach((item, i) => {
+        const shiftX = shifts[i] ?? 0;
+        item.style.transform = `translate3d(${round(shiftX)}px, 0, 0)`;
+        item.classList.toggle('active', currentIndex === i);
+      });
+    }
+
+    function getTargets() {
+      const isOpen = idx => idx === hoveredIndex || idx === currentIndex;
+      return baseRects.slice(0, -1).map((_, i) => (isOpen(i) || isOpen(i + 1)) ? 1 : 0);
+    }
+
+    function springStep(now) {
+      const dt = Math.min((now - lastTime) / 1000, 1 / 30);
+      lastTime = now;
+      const targets = getTargets();
+      let settling = false;
+
+      for (let i = 0; i < targets.length; i++) {
+        const target = targets[i];
+        const x = openness[i] ?? target;
+        const v = velocity[i] ?? 0;
+        const accel = (-stiffness * (x - target) - damping * v) / mass;
+        const nextV = v + accel * dt;
+        const nextX = x + nextV * dt;
+
+        if (Math.abs(nextX - target) > 0.002 || Math.abs(nextV) > 0.02) {
+          openness[i] = nextX;
+          velocity[i] = nextV;
+          settling = true;
+        } else {
+          openness[i] = target;
+          velocity[i] = 0;
+        }
+      }
+
+      renderFrame();
+
+      if (settling) {
+        animFrame = requestAnimationFrame(springStep);
+      } else {
+        animFrame = 0;
+      }
+    }
+
+    function requestSpring() {
+      if (!animFrame) {
+        lastTime = performance.now();
+        animFrame = requestAnimationFrame(springStep);
+      }
+    }
+
+    // Pointer events on container
+    container.addEventListener('mousemove', (e) => {
+      const bounds = container.getBoundingClientRect();
+      const x = e.clientX - bounds.left;
+      const y = e.clientY - bounds.top;
+
+      if (gradient) {
+        gradient.setAttribute('cx', String(round(x)));
+        gradient.setAttribute('cy', String(round(y)));
+      }
+      if (!pointerInside && glowPath) {
+        pointerInside = true;
+        glowPath.style.opacity = '1';
+      }
+
+      // Find nearest pill
+      const shifts = computeShifts();
+      let nearest = null;
+      let shortest = Infinity;
+      for (let i = 0; i < baseRects.length; i++) {
+        const px = baseRects[i].x + (shifts[i] ?? 0);
+        const pw = baseRects[i].width;
+        const dist = x < px ? px - x : x > px + pw ? x - (px + pw) : 0;
+        if (dist < shortest) {
+          shortest = dist;
+          nearest = i;
+        }
+      }
+
+      if (nearest !== hoveredIndex) {
+        hoveredIndex = nearest;
+        requestSpring();
+      }
+    });
+
+    container.addEventListener('mouseleave', () => {
+      hoveredIndex = null;
+      pointerInside = false;
+      if (glowPath) glowPath.style.opacity = '0';
+      requestSpring();
+    });
+
+    // Click handler on items
+    items.forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = item.dataset.navTarget;
+        if (target && typeof activateView === 'function') {
+          activateView(target);
+        }
+      });
+    });
+
+    // Resize observer
+    if (window.ResizeObserver) {
+      const ro = new ResizeObserver(() => measure());
+      ro.observe(wrap);
+      items.forEach(it => ro.observe(it));
+    }
+
+    return {
+      measure,
+      setActiveTarget(targetName) {
+        const idx = items.findIndex(el => el.dataset.navTarget === targetName);
+        if (idx !== -1) {
+          currentIndex = idx;
+        }
+        items.forEach((item, i) => {
+          item.classList.toggle('active', item.dataset.navTarget === targetName);
+        });
+        measure();
+        requestSpring();
+        requestAnimationFrame(() => {
+          measure();
+          requestSpring();
+        });
+        setTimeout(() => {
+          measure();
+          requestSpring();
+        }, 80);
+      }
+    };
+  }).filter(Boolean);
+
+  window._gooeyControllers = controllers;
+
+  // Sync all wrappers immediately to current active section
+  window.updateGooeyNavbarsActive(currentActiveSection || 'home');
+
+  // Re-measure after fonts load or resize
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => controllers.forEach(c => c && c.measure()));
+  }
+  window.addEventListener('resize', () => controllers.forEach(c => c && c.measure()));
+
+  // Initial measurements
+  setTimeout(() => controllers.forEach(c => c.measure()), 50);
+  setTimeout(() => controllers.forEach(c => c.measure()), 250);
+  setTimeout(() => controllers.forEach(c => c.measure()), 600);
+}
+
+document.addEventListener('DOMContentLoaded', initGooeyNavbars);
+window.addEventListener('load', initGooeyNavbars);
+
+
+
+// ====================================================================
+// FRAMER CURSOR DOT TRAIL COMPONENT
+// Ported from: https://www.framer.com/marketplace/components/cursor-dot-trail/
+// Features smooth spring-physics trailing dot, velocity gradient tail,
+// interactive hover ring transformations, and automatic theme adaptation:
+// - Black cursor on red background
+// - White cursor on black background (including the footer, dossier, modals)
+// ====================================================================
+
+(function initCursorDotTrail() {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return;
+  // Disable on touch-only devices
+  if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) {
+    return;
+  }
+
+  // Prevent duplicate canvas
+  if (document.getElementById('cursorTrailCanvas')) return;
+
+  const canvas = document.createElement('canvas');
+  canvas.id = 'cursorTrailCanvas';
+  canvas.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(canvas);
+
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  const config = {
+    size: 11,               // Dot diameter in px
+    hoverSize: 38,          // Hover ring diameter in px
+    borderWidth: 2,         // Ring border width
+    spring: 0.16,           // Follow spring acceleration
+    friction: 0.52,         // Follow friction damping
+    trailDuration: 220,     // Trail duration in ms
+    transitionSpeed: 0.18   // Lerp speed for hover & color transitions
+  };
+
+  let dpr = Math.max(1, window.devicePixelRatio || 1);
+  function resize() {
+    dpr = Math.max(1, window.devicePixelRatio || 1);
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    canvas.width = Math.floor(w * dpr);
+    canvas.height = Math.floor(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+
+  const mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+  const pos = { x: mouse.x, y: mouse.y };
+  const vel = { x: 0, y: 0 };
+  let trailPoints = [];
+  let lastTime = performance.now();
+  let isMouseOver = false;
+  let isMouseDown = false;
+  let opacity = 0;
+
+  let curRadius = config.size / 2;
+  let fillOpacity = 1;
+  let strokeOpacity = 0;
+
+  // Color lerping: black (#0a0a0a) on red, white (#ffffff) on black
+  let curR = 10, curG = 10, curB = 10;
+
+  window.addEventListener('mousemove', (e) => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+    if (!isMouseOver) {
+      isMouseOver = true;
+      pos.x = mouse.x;
+      pos.y = mouse.y;
+    }
+  }, { passive: true });
+
+  window.addEventListener('mousedown', () => {
+    isMouseDown = true;
+  }, { passive: true });
+
+  window.addEventListener('mouseup', () => {
+    isMouseDown = false;
+  }, { passive: true });
+
+  document.addEventListener('mouseleave', () => {
+    isMouseOver = false;
+  });
+
+  document.addEventListener('mouseenter', (e) => {
+    isMouseOver = true;
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+
+  // Determines whether the background at cursor coordinate is black/dark
+  function isBlackBackground(x, y) {
+    // 1. If body has intro-blackout active, entire view is dark
+    if (document.body.classList.contains('intro-blackout')) {
+      return true;
+    }
+
+    const el = document.elementFromPoint(x, y);
+    if (!el) return false;
+
+    // 2. Footer is explicitly dark (black background) - user requested: "including the footer"
+    if (el.closest('#contact, .gravity-footer, .footer-inner, .footer-right')) {
+      return true;
+    }
+
+    // 3. Open dossier stage, blackout overlays, cert lightbox, open modals
+    if (el.closest('#dossierStage.is-open, .dossier-blackout, .cert-lightbox.open, #certLightbox.open, .preview-modal, dialog[open]')) {
+      return true;
+    }
+
+    // 4. Elements with explicit dark attribute or class
+    if (el.closest('[data-theme="dark"], .bg-black, [aria-label*="trail{invert-color}"]')) {
+      return true;
+    }
+
+    // 5. Check computed background-color up to document body
+    let curr = el;
+    while (curr && curr !== document.documentElement) {
+      const bg = window.getComputedStyle(curr).backgroundColor;
+      if (bg && bg !== 'transparent' && bg !== 'rgba(0, 0, 0, 0)') {
+        const m = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+        if (m) {
+          const a = m[4] !== undefined ? parseFloat(m[4]) : 1;
+          if (a > 0.35) {
+            const r = parseInt(m[1], 10);
+            const g = parseInt(m[2], 10);
+            const b = parseInt(m[3], 10);
+            // Black background: rgb all dark (< 45)
+            // (Note: portfolio red background is rgb(128, 0, 0) or rgb(31, 0, 3) where r is high)
+            if (r < 45 && g < 45 && b < 45) {
+              return true;
+            }
+            return false;
+          }
+        }
+      }
+      curr = curr.parentElement;
+    }
+
+    return false;
+  }
+  window.isBlackBackground = isBlackBackground;
+
+  function lerp(start, end, factor) {
+    return start + (end - start) * factor;
+  }
+
+  function loop(now) {
+    const dt = Math.min(33, Math.max(8, now - lastTime));
+    lastTime = now;
+
+    ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
+
+    // Fade in/out
+    opacity = lerp(opacity, isMouseOver ? 1 : 0, 0.14);
+
+    if (opacity > 0.005) {
+      // Spring physics
+      const dx = mouse.x - pos.x;
+      const dy = mouse.y - pos.y;
+      vel.x += dx * config.spring;
+      vel.y += dy * config.spring;
+      vel.x *= config.friction;
+      vel.y *= config.friction;
+      pos.x += vel.x;
+      pos.y += vel.y;
+
+      // Update trail points
+      trailPoints.push({ x: pos.x, y: pos.y, age: 0 });
+      for (let i = 0; i < trailPoints.length; i++) {
+        trailPoints[i].age += dt;
+      }
+      trailPoints = trailPoints.filter(p => p.age < config.trailDuration);
+
+      // Check hovered element
+      const targetEl = document.elementFromPoint(mouse.x, mouse.y);
+      const isDark = isBlackBackground(mouse.x, mouse.y);
+
+      // Invert color target: White (#ffffff) on dark/black, Black (#0a0a0a) on red/light
+      const targetR = isDark ? 255 : 10;
+      const targetG = isDark ? 255 : 10;
+      const targetB = isDark ? 255 : 10;
+
+      curR = lerp(curR, targetR, config.transitionSpeed);
+      curG = lerp(curG, targetG, config.transitionSpeed);
+      curB = lerp(curB, targetB, config.transitionSpeed);
+
+      const r = Math.round(curR);
+      const g = Math.round(curG);
+      const b = Math.round(curB);
+
+      // Check if hovering interactive element
+      const isInteractive = !!targetEl?.closest('a, button, [role="button"], .wheel-card, .falling-item, input, textarea, select, [tabindex="0"]');
+
+      // Morph states: keep solid dot, remove expanding hollow circle ring on buttons
+      let targetRadius = isInteractive ? (config.size / 2 * 0.9) : (config.size / 2);
+      if (isMouseDown) {
+        targetRadius *= 0.82;
+      }
+      curRadius = lerp(curRadius, targetRadius, config.transitionSpeed);
+
+      fillOpacity = 1;
+      strokeOpacity = 0;
+
+      // 1. Draw velocity trailing tail
+      if (trailPoints.length > 1) {
+        ctx.beginPath();
+        ctx.moveTo(trailPoints[0].x, trailPoints[0].y);
+        for (let i = 1; i < trailPoints.length; i++) {
+          ctx.lineTo(trailPoints[i].x, trailPoints[i].y);
+        }
+
+        const pFirst = trailPoints[0];
+        const pLast = trailPoints[trailPoints.length - 1];
+        const grad = ctx.createLinearGradient(pFirst.x, pFirst.y, pLast.x, pLast.y);
+        const tailRatio = Math.max(0, 1 - pFirst.age / config.trailDuration);
+
+        grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0)`);
+        grad.addColorStop(0.35, `rgba(${r}, ${g}, ${b}, ${(tailRatio * 0.28 * opacity).toFixed(3)})`);
+        grad.addColorStop(1, `rgba(${r}, ${g}, ${b}, ${(0.82 * opacity).toFixed(3)})`);
+
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = Math.max(2, config.size / 3.8);
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.stroke();
+      }
+
+      // 2. Draw dot / expanding ring
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, Math.max(1, curRadius), 0, Math.PI * 2);
+
+      if (strokeOpacity > 0.05) {
+        ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${(strokeOpacity * opacity).toFixed(3)})`;
+        ctx.lineWidth = config.borderWidth;
+        ctx.stroke();
+      }
+
+      if (fillOpacity > 0.01) {
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${(fillOpacity * opacity).toFixed(3)})`;
+        ctx.fill();
+      }
+    }
+
+    requestAnimationFrame(loop);
+  }
+
+  requestAnimationFrame(loop);
+})();
+
+
 </script>
   
   </div>
